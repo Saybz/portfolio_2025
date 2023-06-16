@@ -1,5 +1,6 @@
-import "./globals.css";
+import { FC, PropsWithChildren } from "react";
 import { Cantata_One, Poppins } from "next/font/google";
+import "./globals.css";
 
 export const metadata = {
   title: "Shailash Bhati",
@@ -10,14 +11,14 @@ const cantata = Cantata_One({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--head",
+  variable: "--font-head",
 });
 
 const poppins = Poppins({
-  weight: "400",
+  weight: ["400", "700"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--body",
+  variable: "--font-body",
 });
 
 export default function RootLayout({

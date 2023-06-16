@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        head: "var(--head)",
-        body: "var(--body)",
+        head: ["var(--font-head)"],
+        body: ["var(--font-body)"],
       },
     },
   },
