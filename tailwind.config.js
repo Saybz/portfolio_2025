@@ -15,7 +15,9 @@ module.exports = {
         lightbody: "#B9B9B9",
         strokeline: "#B9B9B9",
       },
-
+      maxWidth: {
+        main: "1440px",
+      },
       spacing: {
         vmain: "6rem",
       },

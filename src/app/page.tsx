@@ -6,37 +6,66 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <main className={"text-white bg-dark " + styles.main}>
-      <section className="relative z-0 flex w-full h-screen intro">
-        <div className="absolute top-0 left-0 w-px h-full stroke bg-light opacity-10"></div>
-        <div className="absolute top-0 w-px h-full left-1/2 stroke bg-light opacity-10"></div>
-        <div className="absolute top-0 right-0 w-px h-full stroke bg-light opacity-10"></div>
-        <div className="flex flex-col justify-center flex-1 w-1/2 px-12 py-vmain left">
-          <div className="flex items-center mb-4 font-head">
-            <span className="relative leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
-              Hey
-            </span>
-            <h1 className="ml-4 text-3xl">
-              {" "}
-              My name is <br /> Shailash Bhati
-            </h1>
+    <main className="flex flex-col items-center justify-between min-h-screen px-24 text-white max-w-main bg-dark">
+      <div className="relative z-0 flex w-full ">
+        <div className="fixed top-0 left-0 w-full h-full mx-auto strokes ">
+          <div className="flex justify-between h-screen px-24 mx-auto max-w-main">
+            <div className="w-px h-full stroke bg-light opacity-10"></div>
+            <div className="w-px h-full stroke bg-light opacity-10"></div>
+            <div className="w-px h-full stroke bg-light opacity-10"></div>
           </div>
-          <div className="max-w-md desc text-lightbody">
-            I’m actually 25 years old and i’m a french web developer based at
-            Tours in France.
-          </div>
+        </div>
+        <div className="flex-1 w-1/2 left">
+          <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
+            <div className="flex items-center mb-4 font-head">
+              <span className="relative leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
+                Hey
+              </span>
+              <h1 className="ml-4 text-3xl">
+                {" "}
+                My name is <br /> Shailash Bhati
+              </h1>
+            </div>
+            <div className="max-w-md desc text-lightbody">
+              I’m actually 25 years old and i’m a french web developer based at
+              Tours in France.
+            </div>
+          </section>
+          <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
+            <div className="flex items-center mb-4 font-head">
+              <h2 className="relative mb-2 leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
+                Skills
+              </h2>
+            </div>
+            <div className="max-w-md desc text-lightbody">
+              Even developping web sites can process with green behaviors.
+            </div>
+          </section>
+
+          <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
+            <div className="flex items-center mb-4 font-head">
+              <h2 className="relative mb-2 leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
+                Education
+              </h2>
+            </div>
+            <div className="max-w-md desc text-lightbody">
+              Even developping web sites can process with green behaviors.
+            </div>
+          </section>
         </div>
 
-        <div className="flex flex-col justify-center flex-1 w-1/2 px-12 py-vmain right">
-          <h2 className="relative mb-4 text-xxl font-head before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary">
-            Say hello
-          </h2>
-          <div className="text-lightbody">
-            <p className="mb-1">shailash.bhati@gmail.com</p>
-            <p>linkedin</p>
-          </div>
+        <div className="sticky top-0 w-1/2 h-screen right">
+          <section className="flex flex-col justify-center flex-1 h-full px-12 py-vmain">
+            <h2 className="relative mb-4 text-xxl font-head before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary">
+              Say hello
+            </h2>
+            <div className="text-lightbody">
+              <p className="mb-1">shailash.bhati@gmail.com</p>
+              <p>linkedin</p>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
