@@ -1,6 +1,8 @@
+"use client";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "./page.module.css";
+import Scene from "@/Scene";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,13 +58,15 @@ export default function Home() {
 
         <div className="sticky top-0 w-1/2 h-screen right">
           <section className="flex flex-col justify-center flex-1 h-full px-12 py-vmain">
-            <h2 className="relative mb-4 text-xxl font-head before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary">
+            <Scene />
+
+            {/* <h2 className="relative mb-4 text-xxl font-head before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary">
               Say hello
             </h2>
             <div className="text-lightbody">
               <p className="mb-1">shailash.bhati@gmail.com</p>
               <p>linkedin</p>
-            </div>
+            </div> */}
           </section>
         </div>
       </div>
