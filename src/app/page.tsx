@@ -4,17 +4,28 @@ import { Inter } from "next/font/google";
 import styles from "./page.module.css";
 import Scene from "@/Scene";
 
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  /*  useEffect(() => {
+    const textWrappers = document.querySelectorAll(".");
+    const pinTrigger = ScrollTrigger.create();
+  }); */
+
   return (
     <main className="flex flex-col items-center justify-between min-h-screen px-24 text-white max-w-main bg-dark">
       <div className="relative z-0 flex w-full ">
         <div className="fixed top-0 left-0 w-full h-full mx-auto strokes ">
-          <div className="flex justify-between h-screen px-24 mx-auto max-w-main">
+          <div className="z-0 flex justify-between h-screen px-24 mx-auto max-w-main">
             <div className="w-px h-full stroke bg-light opacity-10"></div>
-            <div className="w-px h-full stroke bg-light opacity-10"></div>
-            <div className="w-px h-full stroke bg-light opacity-10"></div>
+            <div className="w-px h-full stroke bg-none opacity-10"></div>
+            <div className="w-px h-full stroke bg-none opacity-10"></div>
           </div>
         </div>
         <div className="flex-1 w-1/2 left">
@@ -59,14 +70,6 @@ export default function Home() {
         <div className="sticky top-0 w-1/2 h-screen right">
           <section className="flex flex-col justify-center flex-1 h-full px-12 py-vmain">
             <Scene />
-
-            {/* <h2 className="relative mb-4 text-xxl font-head before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary">
-              Say hello
-            </h2>
-            <div className="text-lightbody">
-              <p className="mb-1">shailash.bhati@gmail.com</p>
-              <p>linkedin</p>
-            </div> */}
           </section>
         </div>
       </div>
