@@ -23,8 +23,8 @@ type GLTFResult = GLTF & {
     Cube001: THREE.Mesh;
     Cube002: THREE.Mesh;
     NurbsPath: THREE.Mesh;
-    head_backup: THREE.Mesh;
     base_hair001: THREE.Mesh;
+    hair_lvl_2: THREE.Mesh;
   };
   materials: {
     skin: THREE.MeshStandardMaterial;
@@ -53,134 +53,130 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         receiveShadow
         geometry={nodes.head.geometry}
         material={materials.skin}
-        position={[-0.06941043, 16.04407501, -0.30655]}
-        rotation={[1.56139063, 0, 0]}
-        scale={2.05152035}
+        position={[-0.001, 6.993, 0.013]}
+        rotation={[1.561, 0, 0]}
+        scale={0.189}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.ear.geometry}
         material={materials.skin}
-        position={[2.28063297, 16.24105644, 0.02507015]}
-        rotation={[-1.74631164, 0.17268349, -0.03564611]}
-        scale={[0.34448963, 0.17570929, 0.49189928]}
+        position={[0.215, 7.011, 0.043]}
+        rotation={[-1.746, 0.173, -0.036]}
+        scale={[0.032, 0.016, 0.045]}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.eyes.geometry}
         material={materials.Eyes}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.nose.geometry}
-        material={nodes.nose.material}
-        position={[-0.02472818, 15.74908066, 2.17762399]}
-        rotation={[0.05740661, 0, 0]}
-        scale={[0.20529276, 0.20529278, 0.20529278]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.trouser.geometry}
-        material={materials.pant}
+        position={[0.005, 5.518, 0.041]}
+        scale={0.092}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.body.geometry}
         material={materials.skin}
+        position={[0.005, 5.518, 0.041]}
+        scale={0.092}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.shirt.geometry}
         material={materials.shirt}
+        position={[0.005, 5.518, 0.041]}
+        scale={0.092}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.Karmine_Corp_logosvg.geometry}
         material={materials["Karmine_Corp_logo.svg"]}
+        position={[0.005, 5.518, 0.041]}
+        scale={0.092}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.hair_lvl_2.geometry}
+        material={materials.hair}
+        position={[0.004, 7.213, 0.144]}
+        rotation={[0.152, 0.038, -1.588]}
+        scale={-0.059}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.base_hair.geometry}
         material={materials.hair}
-        position={[-0.06941043, 16.12133026, -0.33625185]}
-        rotation={[1.56139063, 0, 0]}
-        scale={2.05152035}
+        position={[-0.001, 7, 0.01]}
+        rotation={[1.561, 0, 0]}
+        scale={0.189}
       />
+      <group position={[0.005, 5.518, 0.041]} scale={0.092}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002_1.geometry}
+          material={materials.shoes}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002_2.geometry}
+          material={materials.pant}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube001.geometry}
+          material={materials.Lace}
+          position={[-0.961, 1.183, 0]}
+          scale={3.028}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002.geometry}
+          material={materials["Inner Shoe"]}
+          position={[-0.961, 2.878, -0.096]}
+          scale={[2.631, 3.213, 2.631]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.NurbsPath.geometry}
+          material={materials.pant}
+          position={[-0.961, 1.885, 1.427]}
+          rotation={[1.513, 0, 0]}
+          scale={[0.24, 0.232, 0.262]}
+        />
+      </group>
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.head_backup.geometry}
-        material={nodes.head_backup.material}
-        position={[-0.06941043, 13.79614449, -0.30655]}
-        rotation={[1.56139063, 0, 0]}
-        scale={2.05152035}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.base_hair001.geometry}
-        material={nodes.base_hair001.material}
-        position={[-0.06941043, 13.87339973, -0.33625185]}
-        rotation={[1.56139063, 0, 0]}
-        scale={2.05152035}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder001.geometry}
+        geometry={nodes.trouser.geometry}
         material={materials.pant}
+        position={[0.005, 5.518, 0.041]}
+        scale={0.092}
       />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder001_1.geometry}
-        material={materials.skin}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube002_1.geometry}
-        material={materials.shoes}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube002_2.geometry}
-        material={materials.pant}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube001.geometry}
-        material={materials.Lace}
-        position={[-0.96088547, 1.18269897, 0]}
-        scale={3.02781916}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube002.geometry}
-        material={materials["Inner Shoe"]}
-        position={[-0.96088547, 2.87834549, -0.09579469]}
-        scale={[2.63103676, 3.2128818, 2.63103676]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.NurbsPath.geometry}
-        material={materials.pant}
-        position={[-0.96106672, 1.88477635, 1.42681253]}
-        rotation={[1.5129463, 0, 0]}
-        scale={[0.23966806, 0.23155724, 0.26183161]}
-      />
+      <group position={[0.005, 5.518, 0.041]} scale={0.092}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder001.geometry}
+          material={materials.pant}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder001_1.geometry}
+          material={materials.skin}
+        />
+      </group>
     </group>
   );
 }
