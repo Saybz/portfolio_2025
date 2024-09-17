@@ -21,13 +21,6 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen px-24 text-white max-w-main bg-dark">
       <div className="relative z-0 flex w-full ">
-        <div className="fixed top-0 left-0 w-full h-full mx-auto strokes ">
-          <div className="z-0 flex justify-between h-screen px-24 mx-auto max-w-main">
-            <div className="w-px h-full stroke bg-light opacity-10"></div>
-            <div className="w-px h-full stroke bg-none opacity-10"></div>
-            <div className="w-px h-full stroke bg-none opacity-10"></div>
-          </div>
-        </div>
         <div className="flex-1 w-1/2 left">
           <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
             <div className="flex items-center mb-4 font-head">
@@ -71,6 +64,13 @@ export default function Home() {
           <section className="flex flex-col justify-center flex-1 h-full px-12 py-vmain">
             <Scene />
           </section>
+        </div>
+        <div className="fixed top-0 left-0 w-full h-full mx-auto strokes ">
+          <div className="z-0 flex justify-between h-screen px-24 mx-auto max-w-main">
+            <div className="w-px h-full stroke bg-light opacity-10"></div>
+            {/* <div className="w-px h-full stroke bg-light opacity-10"></div>
+            <div className="w-px h-full stroke bg-light opacity-10"></div> */}
+          </div>
         </div>
       </div>
     </main>

@@ -4,6 +4,16 @@
 
 :root {
   --color-dark: #1E2225;
+  --font-head: "Cantata One", serif; /* Police par défaut si variable non définie */
+  --font-body: "Poppins", sans-serif;
+}
+
+.font-head {
+  font-family: var(--font-head);
+}
+
+.font-body {
+  font-family: var(--font-body);
 }
 
 @media (prefers-color-scheme: dark) {
