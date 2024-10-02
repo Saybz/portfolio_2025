@@ -43,11 +43,6 @@ a {
   text-decoration: none;
 }
 
-.container {
-  height: 300vh;
-  overflow: hidden; /* Cache tout overflow */
-}
-
 @media (prefers-color-scheme: dark) {
 
 }

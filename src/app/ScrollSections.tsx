@@ -1,44 +1,70 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
 // Enregistrer ScrollTrigger dans GSAP
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 export default function ScrollSections() {
   // Référence des sections
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
+    const sections = gsap.utils.toArray(".section") as HTMLElement[];
 
-    if (container) {
-      // GSAP ScrollTrigger configuration
+    let currentSection = 0;
+    let isAnimating = false;
+
+    // Function to handle manual scrolling
+    const goToSection = (index: number) => {
+      if (isAnimating || index < 0 || index >= sections.length) return;
+
+      isAnimating = true;
+      currentSection = index;
+
+      // Smoothly scroll to the selected section
       gsap.to(container, {
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1, // Synchronise l'animation avec le scroll
-          pin: true, // Pin le container pour éviter que d'autres contenus ne scrollent
-          snap: {
-            snapTo: 1 / 3, // Snap scroll à chaque section (3 sections ici)
-            duration: { min: 0.2, max: 1 }, // Durée de l'animation de snap
-            ease: "power1.inOut",
-          },
+        scrollTo: { y: sections[index], autoKill: false },
+        duration: 1,
+        ease: "power2.inOut",
+        onComplete: () => {
+          isAnimating = false; // Re-enable scrolling once animation is complete
         },
       });
-    }
+    };
 
+    const handleScroll = (event: WheelEvent) => {
+      if (isAnimating) return;
+
+      const delta = event.deltaY;
+
+      if (delta > 0 && currentSection < sections.length - 1) {
+        // Scroll down
+        goToSection(currentSection + 1);
+      } else if (delta < 0 && currentSection > 0) {
+        // Scroll up
+        goToSection(currentSection - 1);
+      }
+    };
+
+    // Attacher l'événement wheel à window pour détecter le scroll depuis n'importe où
+    window.addEventListener("wheel", handleScroll);
+
+    // Nettoyage lors du démontage du composant
     return () => {
-      // Nettoyer les triggers pour éviter des comportements indésirables lors du démontage
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      window.removeEventListener("wheel", handleScroll);
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="container flex-1 w-1/2 left">
-      <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
+    <div
+      ref={containerRef}
+      className="flex-1 h-screen overflow-hidden snap-y snap-mandatory left"
+    >
+      <section className="flex flex-col justify-center h-screen px-12 section snap-start py-vmain intro">
         <div className="flex items-center mb-4 font-head">
           <span className="relative leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
             Hey
@@ -53,7 +79,7 @@ export default function ScrollSections() {
           Tours in France.
         </div>
       </section>
-      <section className="flex flex-col justify-center h-screen px-12 py-vmain intro">
+      <section className="flex flex-col justify-center h-screen px-12 section snap-start py-vmain intro">
         <div className="flex items-center mb-4 font-head">
           <h2 className="relative mb-2 leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
             Skills
@@ -64,7 +90,7 @@ export default function ScrollSections() {
         </div>
       </section>
 
-      <section className="flex-col justify-center h-screen px-12 sectionflex py-vmain intro">
+      <section className="flex flex-col justify-center h-screen px-12 section al snap-start sectionflex py-vmain intro">
         <div className="flex items-center mb-4 font-head">
           <h2 className="relative mb-2 leading-none before:block before:absolute before:-left-12 before:top-0 before:w-2 before:h-full before:bg-primary text-big text-primary">
             Education
