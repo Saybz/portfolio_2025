@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from "react";
-import { Cantata_One, Poppins } from "next/font/google";
+import { Comfortaa, Poppins } from "next/font/google";
 import "./globals.css";
 
 export const metadata = {
@@ -7,18 +7,18 @@ export const metadata = {
   description: "My portfolio, my rules",
 };
 
-const cantata = Cantata_One({
+const comfortaa = Comfortaa({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-head",
+  variable: "--font-body",
 });
 
 const poppins = Poppins({
   weight: ["400", "700"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-body",
+  variable: "--font-head",
 });
 
 export default function RootLayout({
@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cantata.variable} ${poppins.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={`${comfortaa.variable} ${poppins.variable}`}>
+      <body className="bg-light">{children}</body>
     </html>
   );
 }

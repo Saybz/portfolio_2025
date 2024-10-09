@@ -9,7 +9,7 @@ const Scene = () => {
     <Canvas>
       <ambientLight intensity={2} />
       <directionalLight color="white" position={[0, 0, 5]} />
-      <Model position={[0, -14, 0]} scale={2.2} />
+      <Model position={[0, -14, -2]} scale={2.2} />
       {/* <primitive object={gltf.scene} position={[0, -2, 0]} scale={0.2} /> */}
     </Canvas>
   );
