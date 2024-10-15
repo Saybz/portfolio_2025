@@ -18,6 +18,7 @@ export default function Home() {
 
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
+  const dotRef = useRef<HTMLSpanElement | null>(null);
   const sections = [
     {
       title: "Hey",
@@ -147,6 +148,21 @@ export default function Home() {
     },
     []
   );
+  // Animation du Dot dans le menu de navigation
+  const animateDot = (index: number) => {
+    if (dotRef.current) {
+      const target = document.querySelector(`#nav-item-${index}`);
+      if (target) {
+        const { top, height } = target.getBoundingClientRect();
+        console.log(top, height);
+        gsap.to(dotRef.current, {
+          top: index * (height + 16) + height / 2,
+          duration: 0.5,
+          ease: "power3.out",
+        });
+      }
+    }
+  };
 
   const animateTitle = (direction: number) => {
     if (titleRef.current) {
@@ -193,6 +209,7 @@ export default function Home() {
         animateTitle(direction); // Animer le titre avec direction
         requestAnimationFrame(() => {
           animateSectionEntry(newIndex);
+          animateDot(newIndex); // Animer le dot vers la nouvelle position
         });
       },
     });
@@ -203,8 +220,13 @@ export default function Home() {
       if (ref) {
         tl.to(
           ref,
-          { ...item.animation.hidden, duration: 0.5, ease: "circ" },
-          0
+          {
+            ...item.animation.hidden,
+            duration: 0.5,
+            delay: item.animation.delay,
+            ease: "circ",
+          },
+          "<"
         );
       }
     });
@@ -218,6 +240,13 @@ export default function Home() {
         0
       );
     }
+  };
+
+  const handleNavClick = (index: number) => {
+    if (isAnimating || index === currentIndex) return;
+    const direction = index > currentIndex ? 1 : -1;
+    setIsAnimating(true);
+    animateSectionChange(index, direction);
   };
 
   useEffect(() => {
@@ -241,35 +270,64 @@ export default function Home() {
   useEffect(() => {
     if (refsReady) {
       requestAnimationFrame(() => animateSectionEntry(0));
+      animateDot(currentIndex);
       animateTitle(1);
     }
   }, [refsReady]);
 
   return (
-    <main className="min-h-screen overflow-hidden text-dark max-w-main bg-light">
-      <div className="relative w-full h-screen pt-12 md:pt-16">
-        <div className="z-10 flex flex-col items-start justify-start xl:px-8">
-          <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary md:text-big">
-            <h2 ref={titleRef} className="font-bold ">
-              {sections[currentIndex].title}
-            </h2>
-          </div>
-          <div className="max-w-md px-4 xl:p-x-0">
-            {sections[currentIndex].elements.map((item, index) => (
-              <div
+    <body className="bg-light">
+      <header className="fixed z-50 transform -translate-y-1/2 right-12 top-1/2">
+        <span
+          ref={dotRef}
+          id="dot"
+          className="absolute top-0 w-3 h-3 transition-transform duration-500 rounded-full -right-4 bg-primary"
+        ></span>
+        <nav>
+          <ul className="relative flex flex-col items-center">
+            {sections.map((section, index) => (
+              <li
                 key={index}
-                ref={(el) => setRef(currentIndex, index, el)}
-                className="section-item"
+                id={`nav-item-${index}`}
+                onClick={() => handleNavClick(index)}
+                className={`flex items-center justify-center my-2 w-14 h-14 rounded-xl border-4 transition-all duration-500 cursor-pointer ${
+                  currentIndex === index
+                    ? "bg-secondary text-primary border-primary"
+                    : "border-secondary text-secondary"
+                }`}
               >
-                {item.content}
-              </div>
+                {section.title[0]}
+              </li>
             ))}
+          </ul>
+        </nav>
+      </header>
+      <main className="z-10 min-h-screen overflow-hidden text-dark max-w-main bg-light">
+        <div className="relative w-full h-screen pt-12 md:pt-16">
+          <div className="flex flex-col items-start justify-start xl:px-8">
+            <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary md:text-big">
+              <h2 ref={titleRef} className="font-bold">
+                {sections[currentIndex].title}
+              </h2>
+            </div>
+            <div className="max-w-md px-4 xl:p-x-0">
+              {sections[currentIndex].elements.map((item, index) => (
+                <div
+                  key={index}
+                  ref={(el) => setRef(currentIndex, index, el)}
+                  className="section-item"
+                >
+                  {item.content}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none">
+            <Scene />
           </div>
         </div>
-        <div className="fixed top-0 left-0 z-0 w-screen h-screen">
-          <Scene />
-        </div>
-      </div>
-    </main>
+      </main>
+    </body>
   );
 }

@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${comfortaa.variable} ${poppins.variable}`}>
-      <body className="bg-light">{children}</body>
+      {children}
     </html>
   );
 }
