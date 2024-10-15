@@ -19,6 +19,9 @@ export default function Home() {
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
   const dotRef = useRef<HTMLSpanElement | null>(null);
+  const isMobile = () => window.innerWidth <= 768; // Limite à ajuster si nécessaire
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const sections = [
     {
       title: "Hey",
@@ -153,10 +156,13 @@ export default function Home() {
     if (dotRef.current) {
       const target = document.querySelector(`#nav-item-${index}`);
       if (target) {
-        const { top, height } = target.getBoundingClientRect();
-        console.log(top, height);
+        const { top, height, left, width } = target.getBoundingClientRect();
+        const position = isMobile()
+          ? { left: index * (width + 16) + width / 2 } // Animation horizontale pour mobile
+          : { top: index * (height + 16) + height / 2 }; // Animation verticale pour desktop
+
         gsap.to(dotRef.current, {
-          top: index * (height + 16) + height / 2,
+          ...position,
           duration: 0.5,
           ease: "power3.out",
         });
@@ -250,10 +256,44 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const handleTouchStart = (event: TouchEvent) => {
+      setTouchStart(event.touches[0].clientY);
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      setTouchEnd(event.changedTouches[0].clientY);
+    };
+
+    const handleSwipe = () => {
+      if (touchStart !== null && touchEnd !== null) {
+        const direction = touchEnd < touchStart ? 1 : -1;
+        const newIndex = currentIndex + direction;
+
+        if (newIndex >= 0 && newIndex < sections.length) {
+          setIsAnimating(true);
+          animateSectionChange(newIndex, direction);
+        }
+      }
+      setTouchStart(null);
+      setTouchEnd(null);
+    };
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    handleSwipe();
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [touchStart, touchEnd, currentIndex, isAnimating]);
+
+  useEffect(() => {
     const handleScroll = (event: WheelEvent) => {
       if (isAnimating) return;
 
-      const direction = event.deltaY > 0 ? 1 : -1; // 1 pour le bas, -1 pour le haut
+      const direction = event.deltaY > 0 ? 1 : -1;
       const newIndex = currentIndex + direction;
 
       if (newIndex >= 0 && newIndex < sections.length) {
@@ -275,22 +315,31 @@ export default function Home() {
     }
   }, [refsReady]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      animateDot(currentIndex); // Met à jour la position du dot lors du redimensionnement
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [currentIndex]);
+
   return (
     <body className="bg-light">
-      <header className="fixed z-50 transform -translate-y-1/2 right-12 top-1/2">
+      <header className="fixed z-50 transform -translate-x-1/2 bottom-4 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:right-12 md:left-auto md:top-1/2">
         <span
           ref={dotRef}
           id="dot"
-          className="absolute top-0 w-3 h-3 transition-transform duration-500 rounded-full -right-4 bg-primary"
+          className="absolute left-0 w-3 h-3 transition-transform duration-500 rounded-full md:left-auto -bottom-2 md:bottom-auto md:top-0 md:-right-4 bg-primary"
         ></span>
         <nav>
-          <ul className="relative flex flex-col items-center">
+          <ul className="relative flex items-center md:flex-col">
             {sections.map((section, index) => (
               <li
                 key={index}
                 id={`nav-item-${index}`}
                 onClick={() => handleNavClick(index)}
-                className={`flex items-center justify-center my-2 w-14 h-14 rounded-xl border-4 transition-all duration-500 cursor-pointer ${
+                className={`flex items-center justify-center  m-2 w-14 h-14 rounded-xl border-4 transition-all duration-500 cursor-pointer ${
                   currentIndex === index
                     ? "bg-secondary text-primary border-primary"
                     : "border-secondary text-secondary"
