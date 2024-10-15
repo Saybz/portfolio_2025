@@ -39,7 +39,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function Model(props: JSX.IntrinsicElements["group"]) {
+export function Say(props: JSX.IntrinsicElements["group"]) {
   // const say = useRef<Mesh>(null!);
   const { nodes, materials } = useGLTF("/saymoji.gltf") as GLTFResult;
 

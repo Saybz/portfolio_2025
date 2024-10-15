@@ -65,9 +65,9 @@ export default function ScrollSections() {
       className="flex-1 h-screen overflow-hidden snap-y snap-mandatory"
     >
       <section className="flex flex-col justify-start h-screen px-12 pt-60 section snap-start py-vmain intro">
-        <h2 className="fixed px-8 py-8 pr-12 mb-10 font-bold leading-none rounded-r-full top-20 w-fit font-head before:block before:absolute before:-left-6 before:top-0 before:w-6 before:h-full before:bg-primary text-big text-primary bg-secondary">
-          Hey
-        </h2>
+        <div className="fixed px-8 py-8 pr-12 mb-10 font-bold leading-none rounded-r-full top-20 w-fit font-head before:block before:absolute before:-left-6 before:top-0 before:w-6 before:h-full before:bg-primary text-big text-primary bg-secondary">
+          <h2>Hey</h2>
+        </div>
         <div className="max-w-md desc text-dark">
           <div className="font-light text-xxl text-primary"> My name is</div>
           <div className="text-3xl font-bold text-primary">Shailash Bhati</div>
@@ -75,22 +75,6 @@ export default function ScrollSections() {
             I’m actually 25 years old and i’m a french web developer based at
             Tours in France.
           </p>
-        </div>
-      </section>
-      <section className="flex flex-col justify-start h-screen px-12 section snap-start py-vmain intro">
-        <h2 className="relative px-8 py-8 pr-12 mb-10 font-bold leading-none rounded-r-full w-fit font-head before:block before:absolute before:-left-6 before:top-0 before:w-6 before:h-full before:bg-primary text-big text-primary bg-secondary">
-          Skills
-        </h2>
-
-        <div className="max-w-md desc text-lightbody"></div>
-      </section>
-
-      <section className="flex flex-col justify-start h-screen px-12 section al snap-start sectionflex py-vmain intro">
-        <h2 className="relative px-8 py-8 pr-12 mb-10 font-bold leading-none rounded-r-full w-fit font-head before:block before:absolute before:-left-6 before:top-0 before:w-6 before:h-full before:bg-primary text-big text-primary bg-secondary">
-          Game
-        </h2>
-        <div className="max-w-md desc text-lightbody">
-          Have some fun with this little game
         </div>
       </section>
     </div>
