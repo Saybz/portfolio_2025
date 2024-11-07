@@ -5,7 +5,7 @@
 :root {
   --color-secondary: #F5C378;
   --color-dark: #1E2225;
-  --color-light: #1E2225;
+  --color-light: #F5EFE6;
   --font-head: "Comfortaa", sans-serif; /* Police par défaut si variable non définie */
   --font-body: "Poppins", sans-serif;
 }
@@ -34,15 +34,25 @@ body {
 }
 
 body {
-  background: var(--color-dark);
+  background: var(--color-light);
 }
 
 main {
   margin: 0 auto;
 }
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+#__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (prefers-color-scheme: dark) {

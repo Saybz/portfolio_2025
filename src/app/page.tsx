@@ -9,7 +9,17 @@ import {
 } from "react";
 import { gsap } from "gsap";
 import "tailwindcss/tailwind.css";
-import Scene from "@/Scene";
+// import SplineScene from "@/app/components/SplineScene";
+import { sections } from "@/app/components/data/Sections";
+import dynamic from "next/dynamic";
+
+import { Suspense } from "react";
+
+const SplineScene = dynamic(() => import("./components/SplineScene"), {
+  ssr: false,
+});
+
+const isClient = typeof window !== "undefined";
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,114 +29,10 @@ export default function Home() {
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
   const dotRef = useRef<HTMLSpanElement | null>(null);
-  const isMobile = () => window.innerWidth <= 768; // Limite à ajuster si nécessaire
+  const isMobile = () =>
+    typeof window !== "undefined" && window.innerWidth <= 768; // Limite à ajuster si nécessaire
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const sections = [
-    {
-      title: "Hey",
-      elements: [
-        {
-          content: (
-            <div className="font-light text-xxl text-primary">My name is</div>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0,
-          },
-        },
-        {
-          content: (
-            <div className="text-3xl font-bold text-primary">
-              Shailash Bhati
-            </div>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-        {
-          content: (
-            <p>I’m a 25-year-old French web developer based in Tours.</p>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-      ],
-    },
-    {
-      title: "Skills",
-      elements: [
-        {
-          content: <p>La 3D dans le web m’a toujours fascinée.</p>,
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0,
-          },
-        },
-        {
-          content: (
-            <p>I’m a 25-year-old French web developer based in Tours.</p>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-        {
-          content: (
-            <p>I’m a 25-year-old French web developer based in Tours.</p>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-      ],
-    },
-    {
-      title: "Game",
-      elements: [
-        {
-          content: <p>Explorez le potentiel infini de la 3D.</p>,
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0,
-          },
-        },
-        {
-          content: (
-            <p>I’m a 25-year-old French web developer based in Tours.</p>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-        {
-          content: (
-            <p>I’m a 25-year-old French web developer based in Tours.</p>
-          ),
-          animation: {
-            hidden: { opacity: 0, x: -100 },
-            visible: { opacity: 1, x: 0 },
-            delay: 0.1,
-          },
-        },
-      ],
-    },
-  ];
 
   // Initialisation des références
   useLayoutEffect(() => {
@@ -153,7 +59,7 @@ export default function Home() {
   );
   // Animation du Dot dans le menu de navigation
   const animateDot = (index: number) => {
-    if (dotRef.current) {
+    if (typeof window !== "undefined" && dotRef.current) {
       const target = document.querySelector(`#nav-item-${index}`);
       if (target) {
         const { top, height, left, width } = target.getBoundingClientRect();
@@ -256,59 +162,60 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const handleTouchStart = (event: TouchEvent) => {
-      setTouchStart(event.touches[0].clientY);
-    };
+    if (typeof window !== "undefined") {
+      const handleTouchStart = (event: TouchEvent) => {
+        setTouchStart(event.touches[0].clientY);
+      };
 
-    const handleTouchEnd = (event: TouchEvent) => {
-      setTouchEnd(event.changedTouches[0].clientY);
-    };
+      const handleTouchEnd = (event: TouchEvent) => {
+        setTouchEnd(event.changedTouches[0].clientY);
+      };
 
-    const handleSwipe = () => {
-      if (touchStart !== null && touchEnd !== null) {
-        const direction = touchEnd < touchStart ? 1 : -1;
+      const handleSwipe = () => {
+        if (touchStart !== null && touchEnd !== null) {
+          const direction = touchEnd < touchStart ? 1 : -1;
+          const newIndex = currentIndex + direction;
+
+          if (newIndex >= 0 && newIndex < sections.length) {
+            setIsAnimating(true);
+            animateSectionChange(newIndex, direction);
+          }
+        }
+        setTouchStart(null);
+        setTouchEnd(null);
+      };
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchend", handleTouchEnd);
+      handleSwipe();
+
+      return () => {
+        window.removeEventListener("touchstart", handleTouchStart);
+        window.removeEventListener("touchend", handleTouchEnd);
+      };
+    }
+  }, [touchStart, touchEnd, currentIndex, isAnimating]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleScroll = (event: WheelEvent) => {
+        if (isAnimating) return;
+
+        const direction = event.deltaY > 0 ? 1 : -1;
         const newIndex = currentIndex + direction;
 
         if (newIndex >= 0 && newIndex < sections.length) {
           setIsAnimating(true);
           animateSectionChange(newIndex, direction);
         }
-      }
-      setTouchStart(null);
-      setTouchEnd(null);
-    };
-
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchend", handleTouchEnd);
-
-    handleSwipe();
-
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [touchStart, touchEnd, currentIndex, isAnimating]);
-
-  useEffect(() => {
-    const handleScroll = (event: WheelEvent) => {
-      if (isAnimating) return;
-
-      const direction = event.deltaY > 0 ? 1 : -1;
-      const newIndex = currentIndex + direction;
-
-      if (newIndex >= 0 && newIndex < sections.length) {
-        setIsAnimating(true);
-        animateSectionChange(newIndex, direction);
-      }
-    };
-
-    window.addEventListener("wheel", handleScroll);
-    return () => window.removeEventListener("wheel", handleScroll);
+      };
+      window.addEventListener("wheel", handleScroll);
+      return () => window.removeEventListener("wheel", handleScroll);
+    }
   }, [currentIndex, isAnimating]);
 
   // Lancer l'animation de la première section au chargement si les références sont prêtes
   useEffect(() => {
-    if (refsReady) {
+    if (typeof window !== "undefined" && refsReady) {
       requestAnimationFrame(() => animateSectionEntry(0));
       animateDot(currentIndex);
       animateTitle(1);
@@ -316,16 +223,17 @@ export default function Home() {
   }, [refsReady]);
 
   useEffect(() => {
-    const handleResize = () => {
-      animateDot(currentIndex); // Met à jour la position du dot lors du redimensionnement
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        animateDot(currentIndex); // Met à jour la position du dot lors du redimensionnement
+      };
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, [currentIndex]);
 
   return (
-    <body className="bg-light">
+    <>
       <header className="fixed z-50 transform -translate-x-1/2 bottom-4 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:right-12 md:left-auto md:top-1/2">
         <span
           ref={dotRef}
@@ -372,11 +280,14 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none">
-            <Scene />
-          </div>
+          <Suspense fallback={null}>
+            {/* Ma scène */}
+            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none">
+              {isClient && <SplineScene currentIndex={currentIndex} />}
+            </div>
+          </Suspense>
         </div>
       </main>
-    </body>
+    </>
   );
 }
