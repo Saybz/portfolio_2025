@@ -286,7 +286,7 @@ export default function Home() {
           </div>
           <Suspense fallback={null}>
             {/* Ma scène */}
-            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none">
+            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none ">
               {isClient && <SplineScene currentIndex={currentIndex} />}
             </div>
           </Suspense>
