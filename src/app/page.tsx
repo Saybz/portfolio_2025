@@ -22,6 +22,7 @@ const SplineScene = dynamic(() => import("./components/SplineScene"), {
 const isClient = typeof window !== "undefined";
 
 export default function Home() {
+  const [isClient, setIsClient] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [refsReady, setRefsReady] = useState(false);
@@ -193,6 +194,7 @@ export default function Home() {
         window.removeEventListener("touchend", handleTouchEnd);
       };
     }
+    setIsClient(true);
   }, [touchStart, touchEnd, currentIndex, isAnimating]);
 
   useEffect(() => {
@@ -211,6 +213,7 @@ export default function Home() {
       window.addEventListener("wheel", handleScroll);
       return () => window.removeEventListener("wheel", handleScroll);
     }
+    setIsClient(true);
   }, [currentIndex, isAnimating]);
 
   // Lancer l'animation de la première section au chargement si les références sont prêtes
@@ -220,6 +223,7 @@ export default function Home() {
       animateDot(currentIndex);
       animateTitle(1);
     }
+    setIsClient(true);
   }, [refsReady]);
 
   useEffect(() => {
@@ -230,6 +234,7 @@ export default function Home() {
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }
+    setIsClient(true);
   }, [currentIndex]);
 
   return (
@@ -249,8 +254,8 @@ export default function Home() {
                 onClick={() => handleNavClick(index)}
                 className={`flex items-center justify-center  m-2 w-14 h-14 rounded-xl border-4 transition-all duration-500 cursor-pointer ${
                   currentIndex === index
-                    ? "bg-secondary text-primary border-primary"
-                    : "border-secondary text-secondary"
+                    ? "bg-secondary text-primary border-primary shadow-xl"
+                    : "border-secondary text-secondary shadow-md hover:border-primary "
                 }`}
               >
                 {section.title[0]}
@@ -262,7 +267,7 @@ export default function Home() {
       <main className="z-10 min-h-screen overflow-hidden text-dark max-w-main bg-light">
         <div className="relative w-full h-screen pt-12 md:pt-16">
           <div className="flex flex-col items-start justify-start xl:px-8">
-            <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary md:text-big">
+            <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-big">
               <h2 ref={titleRef} className="font-bold">
                 {sections[currentIndex].title}
               </h2>
@@ -279,7 +284,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-
           <Suspense fallback={null}>
             {/* Ma scène */}
             <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none">
