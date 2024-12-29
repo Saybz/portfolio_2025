@@ -3,9 +3,7 @@ export const sections = [
     title: "Hey",
     elements: [
       {
-        content: (
-          <div className="font-light text-xxl text-primary">My name is</div>
-        ),
+        content: <div className="font-light text-xxl ">My name is</div>,
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },
@@ -13,9 +11,7 @@ export const sections = [
         },
       },
       {
-        content: (
-          <div className="text-3xl font-bold text-primary">Shailash Bhati</div>
-        ),
+        content: <div className="text-3xl font-bold ">Shailash Bhati</div>,
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },

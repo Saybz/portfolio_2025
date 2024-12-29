@@ -19,14 +19,12 @@ const SplineScene = dynamic(() => import("./components/SplineScene"), {
   ssr: false,
 });
 
-const isClient = typeof window !== "undefined";
-
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [refsReady, setRefsReady] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true); // Ajout de l'état de chargement
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
   const dotRef = useRef<HTMLSpanElement | null>(null);
@@ -39,6 +37,11 @@ export default function Home() {
   useLayoutEffect(() => {
     contentRefs.current = sections.map(() => []);
   }, [sections.length]);
+
+  // Mise à jour de l'état de chargement lorsque la scène est prête
+  const handleSceneLoaded = () => {
+    setIsLoading(false); // Mise à jour de l'état pour indiquer que la scène est chargée
+  };
 
   const setRef = useCallback(
     (index: number, elIndex: number, el: HTMLDivElement | null) => {
@@ -156,7 +159,7 @@ export default function Home() {
   };
 
   const handleNavClick = (index: number) => {
-    if (isAnimating || index === currentIndex) return;
+    if (isAnimating || isLoading || index === currentIndex) return;
     const direction = index > currentIndex ? 1 : -1;
     setIsAnimating(true);
     animateSectionChange(index, direction);
@@ -165,15 +168,25 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleTouchStart = (event: TouchEvent) => {
+        if (isAnimating || isLoading) {
+          event.preventDefault(); // Empêche le comportement par défaut du défilement
+          event.stopPropagation(); // Empêche la propagation de l'événement
+          return;
+        }
         setTouchStart(event.touches[0].clientY);
       };
 
       const handleTouchEnd = (event: TouchEvent) => {
+        if (isAnimating || isLoading) {
+          event.preventDefault(); // Empêche le comportement par défaut du défilement
+          event.stopPropagation(); // Empêche la propagation de l'événement
+          return;
+        }
         setTouchEnd(event.changedTouches[0].clientY);
       };
 
       const handleSwipe = () => {
-        if (touchStart !== null && touchEnd !== null) {
+        if (touchStart !== null && touchEnd !== null && isLoading !== true) {
           const direction = touchEnd < touchStart ? 1 : -1;
           const newIndex = currentIndex + direction;
 
@@ -195,12 +208,16 @@ export default function Home() {
       };
     }
     setIsClient(true);
-  }, [touchStart, touchEnd, currentIndex, isAnimating]);
+  }, [touchStart, touchEnd, currentIndex, isAnimating, isLoading]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleScroll = (event: WheelEvent) => {
-        if (isAnimating) return;
+        if (isAnimating || isLoading) {
+          event.preventDefault(); // Empêche le comportement par défaut du défilement
+          event.stopPropagation(); // Empêche la propagation de l'événement
+          return;
+        }
 
         const direction = event.deltaY > 0 ? 1 : -1;
         const newIndex = currentIndex + direction;
@@ -214,17 +231,19 @@ export default function Home() {
       return () => window.removeEventListener("wheel", handleScroll);
     }
     setIsClient(true);
-  }, [currentIndex, isAnimating]);
+  }, [currentIndex, isAnimating, isLoading]);
 
   // Lancer l'animation de la première section au chargement si les références sont prêtes
   useEffect(() => {
-    if (typeof window !== "undefined" && refsReady) {
-      requestAnimationFrame(() => animateSectionEntry(0));
-      animateDot(currentIndex);
-      animateTitle(1);
+    if (typeof window !== "undefined" && refsReady && !isLoading) {
+      setTimeout(() => {
+        requestAnimationFrame(() => animateSectionEntry(0));
+        animateDot(currentIndex);
+        animateTitle(1);
+      }, 1000);
     }
     setIsClient(true);
-  }, [refsReady]);
+  }, [refsReady, isLoading]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -239,6 +258,12 @@ export default function Home() {
 
   return (
     <>
+      {/* Animation de chargement */}
+      {isLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-primary">
+          <div className="loader"></div>
+        </div>
+      )}
       <header className="fixed z-50 transform -translate-x-1/2 bottom-4 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:right-12 md:left-auto md:top-1/2">
         <span
           ref={dotRef}
@@ -264,15 +289,26 @@ export default function Home() {
           </ul>
         </nav>
       </header>
-      <main className="z-10 min-h-screen overflow-hidden text-dark max-w-main bg-light">
+      <main className="z-10 min-h-screen overflow-hidden text-dark max-w-main bg-primary">
         <div className="relative w-full h-screen pt-12 md:pt-16">
-          <div className="flex flex-col items-start justify-start xl:px-8">
+          <Suspense fallback={null}>
+            {/* Ma scène */}
+            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none ">
+              {isClient && (
+                <SplineScene
+                  currentIndex={currentIndex}
+                  onLoad={handleSceneLoaded}
+                />
+              )}
+            </div>
+          </Suspense>
+          <div className="z-10 flex flex-col items-start justify-start xl:px-8">
             <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-big">
               <h2 ref={titleRef} className="font-bold">
                 {sections[currentIndex].title}
               </h2>
             </div>
-            <div className="max-w-md px-4 xl:p-x-0">
+            <div className="max-w-md px-4 xl:p-x-0 text-secondary">
               {sections[currentIndex].elements.map((item, index) => (
                 <div
                   key={index}
@@ -284,12 +320,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <Suspense fallback={null}>
-            {/* Ma scène */}
-            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none ">
-              {isClient && <SplineScene currentIndex={currentIndex} />}
-            </div>
-          </Suspense>
         </div>
       </main>
     </>

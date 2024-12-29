@@ -8,7 +8,7 @@ module.exports = {
         body: ["var(--font-body)"],
       },
       colors: {
-        primary: "#7881F5",
+        primary: "#282882",
         secondary: "#F5C378",
         dark: "#334155",
         light: "#F5EFE6",
