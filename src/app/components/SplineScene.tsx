@@ -23,8 +23,18 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
   const [error, setError] = useState<string | null>(null);
 
   const animationMap: Animation[] = [
-    { objects: ["Plant", "Lamp", "Saymoji"], event: "mouseUp" },
-    { objects: ["Computer", "Saymoji"], event: "mouseDown" },
+    {
+      objects: [
+        "Plant",
+        "Plant_leafs",
+        "Plant_pot",
+        "Plant_dirt",
+        "Lamp",
+        "Saymoji",
+      ],
+      event: "mouseUp",
+    },
+    { objects: ["Computer", "laptop", "Saymoji"], event: "mouseDown" },
     { objects: [], event: "mousePress" },
   ];
 
@@ -45,6 +55,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
       "Plant_dirt",
       "Lamp",
       "Computer",
+      "laptop",
       "Saymoji",
     ];
     objectNames.forEach((name) => {

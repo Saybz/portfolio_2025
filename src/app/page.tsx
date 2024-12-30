@@ -32,7 +32,7 @@ export default function Home() {
     typeof window !== "undefined" && window.innerWidth <= 768; // Limite à ajuster si nécessaire
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
+  const isClientW = () => typeof window !== "undefined";
   // Initialisation des références
   useLayoutEffect(() => {
     contentRefs.current = sections.map(() => []);
@@ -40,7 +40,9 @@ export default function Home() {
 
   // Mise à jour de l'état de chargement lorsque la scène est prête
   const handleSceneLoaded = () => {
-    setIsLoading(false); // Mise à jour de l'état pour indiquer que la scène est chargée
+    setTimeout(() => {
+      setIsLoading(false); // Mise à jour de l'état pour indiquer que la scène est chargée
+    }, 600);
   };
 
   const setRef = useCallback(
@@ -63,7 +65,7 @@ export default function Home() {
   );
   // Animation du Dot dans le menu de navigation
   const animateDot = (index: number) => {
-    if (typeof window !== "undefined" && dotRef.current) {
+    if (isClientW() && dotRef.current) {
       const target = document.querySelector(`#nav-item-${index}`);
       if (target) {
         const { top, height, left, width } = target.getBoundingClientRect();
@@ -158,6 +160,41 @@ export default function Home() {
     }
   };
 
+  // Lancer l'animation de la première section au chargement si les références sont prêtes
+  useEffect(() => {
+    if (isClientW() && refsReady && !isLoading) {
+      setTimeout(() => {
+        requestAnimationFrame(() => animateSectionEntry(0));
+      }, 500);
+      animateDot(currentIndex);
+      animateTitle(1);
+    }
+    setIsClient(true);
+  }, [refsReady, isLoading]);
+
+  // Changement d'index au scroll
+  useEffect(() => {
+    if (isClientW()) {
+      const handleScroll = (event: WheelEvent) => {
+        if (isAnimating || isLoading) {
+          return;
+        }
+
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const newIndex = currentIndex + direction;
+
+        if (newIndex >= 0 && newIndex < sections.length) {
+          setIsAnimating(true);
+          animateSectionChange(newIndex, direction);
+        }
+      };
+      window.addEventListener("wheel", handleScroll);
+      return () => window.removeEventListener("wheel", handleScroll);
+    }
+    setIsClient(true);
+  }, [currentIndex, isAnimating, isLoading]);
+
+  // Changement d'index au click dans la nav
   const handleNavClick = (index: number) => {
     if (isAnimating || isLoading || index === currentIndex) return;
     const direction = index > currentIndex ? 1 : -1;
@@ -165,12 +202,11 @@ export default function Home() {
     animateSectionChange(index, direction);
   };
 
+  // Changement d'index au swipe sur mobile, tablette...
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isClientW()) {
       const handleTouchStart = (event: TouchEvent) => {
         if (isAnimating || isLoading) {
-          event.preventDefault(); // Empêche le comportement par défaut du défilement
-          event.stopPropagation(); // Empêche la propagation de l'événement
           return;
         }
         setTouchStart(event.touches[0].clientY);
@@ -178,8 +214,6 @@ export default function Home() {
 
       const handleTouchEnd = (event: TouchEvent) => {
         if (isAnimating || isLoading) {
-          event.preventDefault(); // Empêche le comportement par défaut du défilement
-          event.stopPropagation(); // Empêche la propagation de l'événement
           return;
         }
         setTouchEnd(event.changedTouches[0].clientY);
@@ -210,43 +244,9 @@ export default function Home() {
     setIsClient(true);
   }, [touchStart, touchEnd, currentIndex, isAnimating, isLoading]);
 
+  // Repositionnement du dot du menu en fonction du device (mobile, desktop, etc)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleScroll = (event: WheelEvent) => {
-        if (isAnimating || isLoading) {
-          event.preventDefault(); // Empêche le comportement par défaut du défilement
-          event.stopPropagation(); // Empêche la propagation de l'événement
-          return;
-        }
-
-        const direction = event.deltaY > 0 ? 1 : -1;
-        const newIndex = currentIndex + direction;
-
-        if (newIndex >= 0 && newIndex < sections.length) {
-          setIsAnimating(true);
-          animateSectionChange(newIndex, direction);
-        }
-      };
-      window.addEventListener("wheel", handleScroll);
-      return () => window.removeEventListener("wheel", handleScroll);
-    }
-    setIsClient(true);
-  }, [currentIndex, isAnimating, isLoading]);
-
-  // Lancer l'animation de la première section au chargement si les références sont prêtes
-  useEffect(() => {
-    if (typeof window !== "undefined" && refsReady && !isLoading) {
-      setTimeout(() => {
-        requestAnimationFrame(() => animateSectionEntry(0));
-        animateDot(currentIndex);
-        animateTitle(1);
-      }, 1000);
-    }
-    setIsClient(true);
-  }, [refsReady, isLoading]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isClientW()) {
       const handleResize = () => {
         animateDot(currentIndex); // Met à jour la position du dot lors du redimensionnement
       };
@@ -264,11 +264,15 @@ export default function Home() {
           <div className="loader"></div>
         </div>
       )}
-      <header className="fixed z-50 transform -translate-x-1/2 bottom-4 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:right-12 md:left-auto md:top-1/2">
+      <header
+        className={`fixed z-50 transform -translate-x-1/2 ${
+          isLoading ? "opacity-0 md:-right-12" : "opacity-1 md:right-0"
+        } ransition-all duration-500 bottom-4 delay-1000 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:left-auto md:top-1/2`}
+      >
         <span
           ref={dotRef}
           id="dot"
-          className="absolute left-0 w-3 h-3 transition-transform duration-500 rounded-full md:left-auto -bottom-2 md:bottom-auto md:top-0 md:-right-4 bg-primary"
+          className="absolute left-0 w-3 h-3 transition-transform duration-500 ease-in rounded-full md:left-auto -bottom-2 md:bottom-auto md:top-0 md:-right-4 bg-secondary"
         ></span>
         <nav>
           <ul className="relative flex items-center md:flex-col">
