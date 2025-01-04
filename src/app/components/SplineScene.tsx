@@ -30,12 +30,35 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
         "Plant_pot",
         "Plant_dirt",
         "Lamp",
+        "lamp_top",
+        "lamp_head",
+        "lamp_foot",
+        "lamp_rode",
+        "Point_light_lamp",
+        "lamp_base",
         "Saymoji",
+        "spot_light",
+        "Camera",
       ],
       event: "mouseUp",
     },
-    { objects: ["Computer", "laptop", "Saymoji"], event: "mouseDown" },
-    { objects: [], event: "mousePress" },
+    {
+      objects: [
+        "Computer",
+        "Sphere",
+        "Sphere2",
+        "Sphere3",
+        "Sphere4",
+        "Sphere5",
+        "Path_skills",
+        "Point_computer",
+        "laptop",
+        "Saymoji",
+        "Camera",
+      ],
+      event: "mouseDown",
+    },
+    // { objects: [], event: "mousePress" },
   ];
 
   // Fonction pour activer/désactiver les ombres d'un objet
@@ -54,9 +77,24 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
       "Plant_pot",
       "Plant_dirt",
       "Lamp",
+      "lamp_top",
+      "lamp_head",
+      "lamp_foot",
+      "lamp_rode",
+      "lamp_base",
+      "Point_light_lamp",
       "Computer",
+      "Point_computer",
       "laptop",
+      "Sphere",
+      "Sphere2",
+      "Sphere3",
+      "Sphere4",
+      "Sphere5",
+      "Path_skills",
       "Saymoji",
+      "spot_light",
+      "Camera",
     ];
     objectNames.forEach((name) => {
       try {
@@ -130,9 +168,11 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
           try {
             splineRef.current = spline;
             loadObjects(spline);
-            onLoad();
+            // Modifier la couleur de fond ici
+            spline.setBackgroundColor("#0A0A2A");
             // Initialiser l'animation pour le premier index
             updateAnimations(0);
+            onLoad();
           } catch (err) {
             setError(`Erreur lors du chargement de la scène: ${err}`);
           }

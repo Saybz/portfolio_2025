@@ -57,33 +57,33 @@ export const sections = [
       },
     ],
   },
-  {
-    title: "Game",
-    elements: [
-      {
-        content: <p>Explorez le potentiel infini de la 3D.</p>,
-        animation: {
-          hidden: { opacity: 0, x: -100 },
-          visible: { opacity: 1, x: 0 },
-          delay: 0,
-        },
-      },
-      {
-        content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
-        animation: {
-          hidden: { opacity: 0, x: -100 },
-          visible: { opacity: 1, x: 0 },
-          delay: 0.1,
-        },
-      },
-      {
-        content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
-        animation: {
-          hidden: { opacity: 0, x: -100 },
-          visible: { opacity: 1, x: 0 },
-          delay: 0.1,
-        },
-      },
-    ],
-  },
+  // {
+  //   title: "Game",
+  //   elements: [
+  //     {
+  //       content: <p>Explorez le potentiel infini de la 3D.</p>,
+  //       animation: {
+  //         hidden: { opacity: 0, x: -100 },
+  //         visible: { opacity: 1, x: 0 },
+  //         delay: 0,
+  //       },
+  //     },
+  //     {
+  //       content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
+  //       animation: {
+  //         hidden: { opacity: 0, x: -100 },
+  //         visible: { opacity: 1, x: 0 },
+  //         delay: 0.1,
+  //       },
+  //     },
+  //     {
+  //       content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
+  //       animation: {
+  //         hidden: { opacity: 0, x: -100 },
+  //         visible: { opacity: 1, x: 0 },
+  //         delay: 0.1,
+  //       },
+  //     },
+  //   ],
+  // },
 ];

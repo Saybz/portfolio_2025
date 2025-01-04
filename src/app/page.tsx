@@ -18,6 +18,10 @@ import { Suspense } from "react";
 const SplineScene = dynamic(() => import("./components/SplineScene"), {
   ssr: false,
 });
+const SplineSceneTeaser = dynamic(
+  () => import("./components/SplineSceneTeaser"),
+  { ssr: false }
+);
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -296,6 +300,9 @@ export default function Home() {
       <main className="z-10 min-h-screen overflow-hidden text-dark max-w-main bg-primary">
         <div className="relative w-full h-screen pt-12 md:pt-16">
           <Suspense fallback={null}>
+            {/* <div style={{ width: "100vw", height: "100vh" }}>
+            <SplineSceneTeaser sceneUrl="https://prod.spline.design/your-scene-url/scene.splinecode" />
+          </div> */}
             {/* Ma scène */}
             <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none ">
               {isClient && (
