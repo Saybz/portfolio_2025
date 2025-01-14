@@ -1,7 +1,7 @@
 // components/SplineScene.tsx
 import { useRef, useEffect, useState } from "react";
 import Spline from "@splinetool/react-spline";
-
+import debounce from "lodash/debounce";
 type SplineSceneProps = {
   currentIndex: number;
   onLoad: () => void;
@@ -38,7 +38,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
         "lamp_base",
         "Saymoji",
         "spot_light",
-        "Camera",
+        "Cameramain",
       ],
       event: "mouseUp",
     },
@@ -54,7 +54,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
         "Point_computer",
         "laptop",
         "Saymoji",
-        "Camera",
+        "Cameramain",
       ],
       event: "mouseDown",
     },
@@ -66,6 +66,22 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
     if (object) {
       object.castShadow = enable;
       object.receiveShadow = enable;
+    }
+  };
+
+  const isMobile = (): boolean => window.innerWidth <= 768;
+
+  // Fonction pour ajuster la caméra en fonction de la taille de l'écran
+  const adjustCameraForMobile = (spline: any) => {
+    const camera = spline.findObjectByName("Cameramain");
+    if (camera) {
+      if (isMobile()) {
+        camera.position.z = 1300; // Zoom pour mobile
+      } else {
+        camera.position.z = 700; // Zoom par défaut pour desktop
+      }
+    } else {
+      console.warn("Caméra non trouvée !");
     }
   };
 
@@ -94,7 +110,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
       "Path_skills",
       "Saymoji",
       "spot_light",
-      "Camera",
+      "Cameramain",
     ];
     objectNames.forEach((name) => {
       try {
@@ -103,7 +119,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
           objectsRef.current[name] = object;
           toggleShadows(object, false); // Désactiver les ombres par défaut
         } else {
-          console.warn(`Objet ${name} non trouvé`);
+          // console.warn(`Objet ${name} non trouvé`);
         }
       } catch (err) {
         setError(`Erreur lors du chargement de l'objet ${name}: ${err}`);
@@ -157,8 +173,21 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
     }
   }, [currentIndex]);
 
+  // useEffect(() => {
+  //   const handleResize = debounce(() => {
+  //     if (splineRef.current) {
+  //       adjustCameraForMobile(splineRef.current);
+  //     }
+  //   }, 300);
+
+  //   window.addEventListener("resize", handleResize);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
+
   return (
-    <div className="absolute inset-0 w-screen h-screen overflow-hidden">
+    <div className="inset-0">
       {/* Afficher un message d'erreur si une erreur survient */}
       {error && <div className="error-message">{error}</div>}
 
@@ -167,9 +196,12 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
         onLoad={(spline) => {
           try {
             splineRef.current = spline;
-            loadObjects(spline);
             // Modifier la couleur de fond ici
-            spline.setBackgroundColor("#0A0A2A");
+            // spline.setBackgroundColor("#0A0A2A");
+            // maintainConstantZoom();
+            // adjustSceneOnResize();
+            loadObjects(spline);
+            // adjustCameraForMobile(spline); // Ajuster la caméra au chargement initial
             // Initialiser l'animation pour le premier index
             updateAnimations(0);
             onLoad();

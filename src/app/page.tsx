@@ -304,7 +304,7 @@ export default function Home() {
             <SplineSceneTeaser sceneUrl="https://prod.spline.design/your-scene-url/scene.splinecode" />
           </div> */}
             {/* Ma scène */}
-            <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none ">
+            <div className="fixed inset-0 z-0 pointer-events-none">
               {isClient && (
                 <SplineScene
                   currentIndex={currentIndex}
