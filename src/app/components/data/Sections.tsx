@@ -35,7 +35,7 @@ export const sections = [
     elements: [
       {
         content: (
-          <p>
+          <p className="mb-2">
             I started my career as a front-end developer, building intuitive
             user interfaces.
           </p>
@@ -47,7 +47,9 @@ export const sections = [
         },
       },
       {
-        content: <p>Now, I’m eager to grow into a full-stack role,</p>,
+        content: (
+          <p className="mb-2">Now, I’m eager to grow into a full-stack role,</p>
+        ),
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },

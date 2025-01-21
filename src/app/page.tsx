@@ -297,8 +297,8 @@ export default function Home() {
           </ul>
         </nav>
       </header>
-      <main className="z-10 text-dark max-w-main bg-primary">
-        <div className="w-full h-screen pt-12 md:pt-16">
+      <main className="z-10 h-full text-dark max-w-main bg-primary">
+        <div className="w-full pt-12 md:pt-16">
           <Suspense fallback={null}>
             {/* <div style={{ width: "100vw", height: "100vh" }}>
             <SplineSceneTeaser sceneUrl="https://prod.spline.design/your-scene-url/scene.splinecode" />
