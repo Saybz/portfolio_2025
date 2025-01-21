@@ -18,44 +18,16 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
     "https://prod.spline.design/9nocutKv2UXEtYh3/scene.splinecode";
   const objectsRef = useRef<{ [key: string]: any }>({});
   const previousActiveObjects = useRef<Set<string>>(new Set());
-
   // État pour gérer les erreurs
   const [error, setError] = useState<string | null>(null);
 
   const animationMap: Animation[] = [
     {
-      objects: [
-        "Plant",
-        "Plant_leafs",
-        "Plant_pot",
-        "Plant_dirt",
-        "Lamp",
-        "lamp_top",
-        "lamp_head",
-        "lamp_foot",
-        "lamp_rode",
-        "Point_light_lamp",
-        "lamp_base",
-        "Saymoji",
-        "spot_light",
-        "Cameramain",
-      ],
+      objects: ["Cameramain", "Saymoji", "desk-relation", "Plant", "Lamp"],
       event: "mouseUp",
     },
     {
-      objects: [
-        "Computer",
-        "Sphere",
-        "Sphere2",
-        "Sphere3",
-        "Sphere4",
-        "Sphere5",
-        "Path_skills",
-        "Point_computer",
-        "laptop",
-        "Saymoji",
-        "Cameramain",
-      ],
+      objects: ["Saymoji", "Cameramain", "Computer", "Skills"],
       event: "mouseDown",
     },
     // { objects: [], event: "mousePress" },
@@ -69,48 +41,16 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
     }
   };
 
-  const isMobile = (): boolean => window.innerWidth <= 768;
-
-  // Fonction pour ajuster la caméra en fonction de la taille de l'écran
-  const adjustCameraForMobile = (spline: any) => {
-    const camera = spline.findObjectByName("Cameramain");
-    if (camera) {
-      if (isMobile()) {
-        camera.position.z = 1300; // Zoom pour mobile
-      } else {
-        camera.position.z = 700; // Zoom par défaut pour desktop
-      }
-    } else {
-      console.warn("Caméra non trouvée !");
-    }
-  };
-
   // Fonction pour charger les objets dans la scène
   const loadObjects = (spline: any) => {
     const objectNames = [
-      "Plant",
-      "Plant_leafs",
-      "Plant_pot",
-      "Plant_dirt",
-      "Lamp",
-      "lamp_top",
-      "lamp_head",
-      "lamp_foot",
-      "lamp_rode",
-      "lamp_base",
-      "Point_light_lamp",
-      "Computer",
-      "Point_computer",
-      "laptop",
-      "Sphere",
-      "Sphere2",
-      "Sphere3",
-      "Sphere4",
-      "Sphere5",
-      "Path_skills",
-      "Saymoji",
-      "spot_light",
       "Cameramain",
+      "Saymoji",
+      "desk-relation",
+      "Plant",
+      "Lamp",
+      "Computer",
+      "Skills",
     ];
     objectNames.forEach((name) => {
       try {
@@ -173,19 +113,6 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
     }
   }, [currentIndex]);
 
-  // useEffect(() => {
-  //   const handleResize = debounce(() => {
-  //     if (splineRef.current) {
-  //       adjustCameraForMobile(splineRef.current);
-  //     }
-  //   }, 300);
-
-  //   window.addEventListener("resize", handleResize);
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
-
   return (
     <div className="inset-0">
       {/* Afficher un message d'erreur si une erreur survient */}
@@ -196,12 +123,8 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
         onLoad={(spline) => {
           try {
             splineRef.current = spline;
-            // Modifier la couleur de fond ici
-            // spline.setBackgroundColor("#0A0A2A");
-            // maintainConstantZoom();
-            // adjustSceneOnResize();
             loadObjects(spline);
-            // adjustCameraForMobile(spline); // Ajuster la caméra au chargement initial
+
             // Initialiser l'animation pour le premier index
             updateAnimations(0);
             onLoad();

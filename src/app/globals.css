@@ -35,6 +35,7 @@ body {
 
 body {
   background: var(--color-primary);
+  overflow: hidden;
 }
 
 main {

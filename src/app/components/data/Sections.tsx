@@ -19,7 +19,9 @@ export const sections = [
         },
       },
       {
-        content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
+        content: (
+          <p>I’m a 27-year-old French web developer based at Bordeaux.</p>
+        ),
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },
@@ -32,7 +34,12 @@ export const sections = [
     title: "Skills",
     elements: [
       {
-        content: <p>La 3D dans le web m’a toujours fascinée.</p>,
+        content: (
+          <p>
+            I started my career as a front-end developer, building intuitive
+            user interfaces.
+          </p>
+        ),
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },
@@ -40,7 +47,7 @@ export const sections = [
         },
       },
       {
-        content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
+        content: <p>Now, I’m eager to grow into a full-stack role,</p>,
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },
@@ -48,11 +55,16 @@ export const sections = [
         },
       },
       {
-        content: <p>I’m a 25-year-old French web developer based in Tours.</p>,
+        content: (
+          <p>
+            expanding my skills to contribute across the entire development
+            process with ambition and drive. My CV
+          </p>
+        ),
         animation: {
           hidden: { opacity: 0, x: -100 },
           visible: { opacity: 1, x: 0 },
-          delay: 0.1,
+          delay: 0.2,
         },
       },
     ],
