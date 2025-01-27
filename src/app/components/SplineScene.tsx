@@ -27,7 +27,14 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
       event: "mouseUp",
     },
     {
-      objects: ["Saymoji", "Cameramain", "Computer", "Skills"],
+      objects: [
+        "Saymoji",
+        "Cameramain",
+        "Computer",
+        "Skills",
+        "Tamplate",
+        "Database",
+      ],
       event: "mouseDown",
     },
     // { objects: [], event: "mousePress" },
@@ -51,6 +58,8 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
       "Lamp",
       "Computer",
       "Skills",
+      "Tamplate",
+      "Database",
     ];
     objectNames.forEach((name) => {
       try {
