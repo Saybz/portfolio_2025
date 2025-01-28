@@ -59,8 +59,8 @@ export const sections = [
       {
         content: (
           <p>
-            expanding my skills to contribute across the entire development
-            process with ambition and drive. My CV
+            Expanding my skills to contribute across the entire development
+            process with ambition and drive.
           </p>
         ),
         animation: {
