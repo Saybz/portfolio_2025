@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 import { Comfortaa, Poppins } from "next/font/google";
 import "./globals.css";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata = {
   title: "Shailash Bhati",
   description: "My portfolio, my rules",
