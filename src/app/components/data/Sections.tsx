@@ -60,7 +60,14 @@ export const sections = [
         content: (
           <p>
             Expanding my skills to contribute across the entire development
-            process with ambition and drive.
+            process with ambition and drive. <br />
+            <a
+              className="underline underline-offset-2"
+              href="./img/CV_Shailash_Bhati.pdf"
+              target="_blank"
+            >
+              Check my CV
+            </a>
           </p>
         ),
         animation: {
