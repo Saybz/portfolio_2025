@@ -1,44 +1,24 @@
 // components/SplineScene.tsx
 import { useRef, useEffect, useState } from "react";
 import Spline from "@splinetool/react-spline";
-import debounce from "lodash/debounce";
+import { SplineAnimationConfig } from "@/app/components/data/sceneConfig";
 type SplineSceneProps = {
   currentIndex: number;
+  splineConfig: SplineAnimationConfig;
   onLoad: () => void;
 };
 
-type Animation = {
-  objects: string[];
-  event: string;
-};
-
-const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
+const SplineScene: React.FC<SplineSceneProps> = ({
+  currentIndex,
+  splineConfig,
+  onLoad,
+}) => {
   const splineRef = useRef<any>(null);
   const splineUrl =
     "https://prod.spline.design/9nocutKv2UXEtYh3/scene.splinecode";
   const objectsRef = useRef<{ [key: string]: any }>({});
-  const previousActiveObjects = useRef<Set<string>>(new Set());
   // État pour gérer les erreurs
   const [error, setError] = useState<string | null>(null);
-
-  const animationMap: Animation[] = [
-    {
-      objects: ["Cameramain", "Saymoji", "desk-relation", "Plant", "Lamp"],
-      event: "mouseUp",
-    },
-    {
-      objects: [
-        "Saymoji",
-        "Cameramain",
-        "Computer",
-        "Skills",
-        "Tamplate",
-        "Database",
-      ],
-      event: "mouseDown",
-    },
-    // { objects: [], event: "mousePress" },
-  ];
 
   // Fonction pour activer/désactiver les ombres d'un objet
   const toggleShadows = (object: any, enable: boolean) => {
@@ -99,28 +79,21 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
   };
 
   // Mettre à jour les animations en fonction de l'index courant
-  const updateAnimations = (index: number) => {
-    const { objects, event } = animationMap[index] || {
-      objects: [],
-      event: "",
-    };
+  const updateAnimations = (config: SplineAnimationConfig) => {
+    const { objects, event } = config || { objects: [], event: "" };
 
-    // Activer ou réactiver les objets pour l'animation actuelle
     activateObjectsForAnimation(objects, event);
 
     // Désactiver les objets qui ne sont pas présents dans cette animation
     deactivateObjectsForAnimation(objects);
-
-    // Mettre à jour les objets actifs dans le précédent actif
-    previousActiveObjects.current = new Set(objects);
   };
 
   useEffect(() => {
-    if (splineRef.current) {
+    if (splineRef.current && splineConfig) {
       // Mettre à jour les animations à chaque changement d'index
-      updateAnimations(currentIndex);
+      updateAnimations(splineConfig);
     }
-  }, [currentIndex]);
+  }, [currentIndex, splineConfig]);
 
   return (
     <div className="inset-0">
@@ -134,8 +107,8 @@ const SplineScene: React.FC<SplineSceneProps> = ({ currentIndex, onLoad }) => {
             splineRef.current = spline;
             loadObjects(spline);
 
-            // Initialiser l'animation pour le premier index
-            updateAnimations(0);
+            // Initialiser l'animation pour la config actuelle
+            updateAnimations(splineConfig);
             onLoad();
           } catch (err) {
             setError(`Erreur lors du chargement de la scène: ${err}`);

@@ -1,16 +1,10 @@
 "use client";
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import "tailwindcss/tailwind.css";
 // import SplineScene from "@/app/components/SplineScene";
-import { sections } from "@/app/components/data/Sections";
+import { scenes } from "@/app/components/data/sceneConfig";
 import dynamic from "next/dynamic";
 
 import { Suspense } from "react";
@@ -18,9 +12,42 @@ import { Suspense } from "react";
 const SplineScene = dynamic(() => import("./components/SplineScene"), {
   ssr: false,
 });
-const SplineSceneTeaser = dynamic(
-  () => import("./components/SplineSceneTeaser"),
-  { ssr: false }
+const SplineSceneTeaser = dynamic(() => import("./components/SplineSceneTeaser"), {
+  ssr: false,
+});
+
+const ProfileIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
+    <path d="M4 20a8 8 0 0 1 16 0" />
+  </svg>
+);
+
+const ProjectsIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="4" width="7" height="7" rx="1.5" />
+    <rect x="14" y="4" width="7" height="7" rx="1.5" />
+    <rect x="3" y="13" width="7" height="7" rx="1.5" />
+    <rect x="14" y="13" width="7" height="7" rx="1.5" />
+  </svg>
 );
 
 export default function Home() {
@@ -29,6 +56,7 @@ export default function Home() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [refsReady, setRefsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Ajout de l'état de chargement
+  const [isSceneMounted, setIsSceneMounted] = useState(false);
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
   const dotRef = useRef<HTMLSpanElement | null>(null);
@@ -37,10 +65,11 @@ export default function Home() {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const isClientW = () => typeof window !== "undefined";
+  const totalScenes = scenes.length;
   // Initialisation des références
   useLayoutEffect(() => {
-    contentRefs.current = sections.map(() => []);
-  }, [sections.length]);
+    contentRefs.current = scenes.map(() => []);
+  }, []);
 
   // Mise à jour de l'état de chargement lorsque la scène est prête
   const handleSceneLoaded = () => {
@@ -102,7 +131,7 @@ export default function Home() {
       onComplete: () => setIsAnimating(false),
     });
 
-    sections[index].elements.forEach((item, idx) => {
+    scenes[index].elements.forEach((item, idx) => {
       const ref = contentRefs.current[index]?.[idx];
       if (ref) {
         tl.fromTo(
@@ -137,7 +166,7 @@ export default function Home() {
     });
 
     // Animation de la sortie de la section actuelle
-    sections[currentIndex].elements.forEach((item, idx) => {
+    scenes[currentIndex].elements.forEach((item, idx) => {
       const ref = contentRefs.current[currentIndex]?.[idx];
       if (ref) {
         tl.to(
@@ -187,7 +216,7 @@ export default function Home() {
         const direction = event.deltaY > 0 ? 1 : -1;
         const newIndex = currentIndex + direction;
 
-        if (newIndex >= 0 && newIndex < sections.length) {
+        if (newIndex >= 0 && newIndex < totalScenes) {
           setIsAnimating(true);
           animateSectionChange(newIndex, direction);
         }
@@ -228,7 +257,7 @@ export default function Home() {
           const direction = touchEnd < touchStart ? 1 : -1;
           const newIndex = currentIndex + direction;
 
-          if (newIndex >= 0 && newIndex < sections.length) {
+          if (newIndex >= 0 && newIndex < totalScenes) {
             setIsAnimating(true);
             animateSectionChange(newIndex, direction);
           }
@@ -260,6 +289,16 @@ export default function Home() {
     setIsClient(true);
   }, [currentIndex]);
 
+  // Monter la scène 3D légèrement après le premier rendu pour accélérer le paint initial
+  useEffect(() => {
+    if (isClientW()) {
+      const timer = setTimeout(() => {
+        setIsSceneMounted(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
     <>
       {/* Animation de chargement */}
@@ -280,7 +319,7 @@ export default function Home() {
         ></span>
         <nav>
           <ul className="relative flex items-center md:flex-col">
-            {sections.map((section, index) => (
+            {scenes.map((scene, index) => (
               <li
                 key={index}
                 id={`nav-item-${index}`}
@@ -291,7 +330,7 @@ export default function Home() {
                     : "border-secondary text-secondary shadow-md hover:border-primary "
                 }`}
               >
-                {section.title[0]}
+                {index === 0 ? <ProfileIcon /> : <ProjectsIcon />}
               </li>
             ))}
           </ul>
@@ -305,9 +344,10 @@ export default function Home() {
           </div> */}
             {/* Ma scène */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-              {isClient && (
+              {isClient && isSceneMounted && (
                 <SplineScene
                   currentIndex={currentIndex}
+                  splineConfig={scenes[currentIndex].spline}
                   onLoad={handleSceneLoaded}
                 />
               )}
@@ -316,11 +356,11 @@ export default function Home() {
           <div className="z-10 flex flex-col items-start justify-start xl:px-8">
             <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-big">
               <h2 ref={titleRef} className="font-bold">
-                {sections[currentIndex].title}
+                {scenes[currentIndex].title}
               </h2>
             </div>
             <div className="max-w-md px-4 xl:p-x-0 text-secondary">
-              {sections[currentIndex].elements.map((item, index) => (
+              {scenes[currentIndex].elements.map((item, index) => (
                 <div
                   key={index}
                   ref={(el) => setRef(currentIndex, index, el)}
