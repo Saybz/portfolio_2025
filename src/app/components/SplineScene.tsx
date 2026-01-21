@@ -40,6 +40,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({
       "Skills",
       "Tamplate",
       "Database",
+      // "project-pdr",
     ];
     objectNames.forEach((name) => {
       try {
@@ -48,7 +49,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({
           objectsRef.current[name] = object;
           toggleShadows(object, false); // Désactiver les ombres par défaut
         } else {
-          // console.warn(`Objet ${name} non trouvé`);
+          console.warn(`Spline object "${name}" not found in scene`);
         }
       } catch (err) {
         setError(`Erreur lors du chargement de l'objet ${name}: ${err}`);

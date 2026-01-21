@@ -8,6 +8,8 @@ import { scenes } from "@/app/components/data/sceneConfig";
 import dynamic from "next/dynamic";
 
 import { Suspense } from "react";
+import Image from "next/image";
+import ProjectPreviews from "./components/ProjectPreviews";
 
 const SplineScene = dynamic(() => import("./components/SplineScene"), {
   ssr: false,
@@ -353,13 +355,13 @@ export default function Home() {
               )}
             </div>
           </Suspense>
-          <div className="z-10 flex flex-col items-start justify-start xl:px-8">
+          <div className="relative z-10 flex flex-col items-start justify-start xl:px-8">
             <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-big">
               <h2 ref={titleRef} className="font-bold">
                 {scenes[currentIndex].title}
               </h2>
             </div>
-            <div className="max-w-md px-4 xl:p-x-0 text-secondary">
+            <div className="max-w-md px-4 xl:p-x-0 text-light">
               {scenes[currentIndex].elements.map((item, index) => (
                 <div
                   key={index}
@@ -370,6 +372,8 @@ export default function Home() {
                 </div>
               ))}
             </div>
+
+            <ProjectPreviews currentIndex={currentIndex} />
           </div>
         </div>
       </main>

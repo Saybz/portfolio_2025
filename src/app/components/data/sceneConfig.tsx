@@ -73,6 +73,7 @@ export const scenes: SceneConfig[] = [
         "Skills",
         "Tamplate",
         "Database",
+        // "project-pdr",
       ],
       event: "mouseDown",
     },
