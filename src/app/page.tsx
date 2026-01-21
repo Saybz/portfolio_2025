@@ -326,10 +326,10 @@ export default function Home() {
                 key={index}
                 id={`nav-item-${index}`}
                 onClick={() => handleNavClick(index)}
-                className={`flex items-center justify-center  m-2 w-14 h-14 rounded-xl border-4 transition-all duration-500 cursor-pointer ${
+                className={`flex items-center justify-center m-2 w-14 h-14 rounded-xl border transition-all duration-500 cursor-pointer ${
                   currentIndex === index
-                    ? "bg-secondary text-primary border-primary shadow-xl"
-                    : "border-secondary text-secondary shadow-md hover:border-primary "
+                    ? "bg-secondary border-secondary text-primaryDark shadow-xl"
+                    : "border-[1px] border-secondary/30 bg-secondary/20 backdrop-blur-md text-secondary shadow-md hover:bg-secondary/30"
                 }`}
               >
                 {index === 0 ? <ProfileIcon /> : <ProjectsIcon />}

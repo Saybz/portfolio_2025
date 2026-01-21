@@ -80,13 +80,13 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     };
   }, [currentIndex]);
 
-  // Animation d'ouverture de la modale (slide depuis le bas)
+  // Animation d'ouverture de la modale (slide depuis le haut)
   useEffect(() => {
     if (!selectedProjectId || !modalRef.current) return;
 
     gsap.fromTo(
       modalRef.current,
-      { y: "100%" },
+      { y: "-100%" },
       { y: "0%", duration: 0.6, ease: "power3.out" }
     );
   }, [selectedProjectId]);
@@ -147,7 +147,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const handleCloseModal = () => {
     if (modalRef.current) {
       gsap.to(modalRef.current, {
-        y: "200%",
+        y: "-100%",
         duration: 0.4,
         ease: "power3.in",
         onComplete: () => setSelectedProjectId(null),
@@ -208,9 +208,9 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         ))}
       </div>
 
-      {/* Carte détaillée centrée */}
+      {/* Carte détaillée légèrement plus haute que le centre */}
       {selectedProject && (
-        <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center">
+        <div className="pointer-events-none fixed inset-0 z-30 flex items-start justify-center pt-12 md:pt-10">
           {/* Overlay */}
           <div
             className="pointer-events-auto absolute inset-0 bg-black/40"
@@ -220,7 +220,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
           {/* Carte */}
           <div
             ref={modalRef}
-            className="pointer-events-auto relative z-10 w-[100vw] max-w-xl overflow-hidden bg-primaryDark rounded-sm shadow-2xl translate-y-full"
+            className="pointer-events-auto relative z-10 w-[100vw] max-w-xl py-10 overflow-hidden bg-primaryDark rounded-sm shadow-2xl -translate-y-full"
           >
             {/* Image au-dessus avec scroll animé */}
             <div
@@ -266,7 +266,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   {selectedProject.stack.map((tech) => (
                     <span
                       key={tech}
-                      className="rounded-full bg-secondary/10 px-2 py-1"
+                      className="rounded-md bg-secondary/10 px-2 py-1"
                     >
                       {tech}
                     </span>
@@ -279,7 +279,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   href={selectedProject.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full bg-secondary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary shadow hover:bg-secondary/90"
+                  className="inline-flex items-center rounded-md border border-secondary/30 bg-secondary/20 backdrop-blur-md px-4 py-2 text-xs font-semibold uppercase tracking-wide text-light shadow hover:bg-secondary/30 transition-colors"
                 >
                   Voir le site
                 </a>
