@@ -1,3 +1,5 @@
+import { FileUser } from "lucide-react";
+
 export type SceneId = "intro" | "projects";
 
 type AnimationState = {
@@ -64,7 +66,7 @@ export const scenes: SceneConfig[] = [
   },
   {
     id: "projects",
-    title: "Projects",
+    title: "Skills",
     spline: {
       objects: [
         "Saymoji",
@@ -80,9 +82,8 @@ export const scenes: SceneConfig[] = [
     elements: [
       {
         content: (
-          <p className="mb-2">
-            I started my career as a front-end developer, building intuitive
-            user interfaces.
+          <p className="mb-6 text-gray-300">
+            Passionate <span className="font-bold text-light">front-end developer</span> with a strong focus on <span className="font-bold text-light">UX</span> and user experience. I enjoy understanding and contributing to every stage of a project in order to create <span className="font-bold text-light">coherent, useful, and efficient interfaces</span>.
           </p>
         ),
         animation: {
@@ -93,7 +94,13 @@ export const scenes: SceneConfig[] = [
       },
       {
         content: (
-          <p className="mb-2">Now, I’m eager to grow into a full-stack role,</p>
+          <a className="inline-flex items-center gap-2 border-[1px] border-secondary/30 px-4 py-2 rounded-md bg-secondary/20 backdrop-blur-md text-secondary shadow-md hover:bg-secondary/30"
+            href="./img/CV_Shailash_Bhati.pdf"
+            target="_blank"
+          >
+            <FileUser className="w-4 h-4" />
+            Check my Resume
+          </a>
         ),
         animation: {
           hidden: { opacity: 0, x: -100 },
@@ -101,26 +108,7 @@ export const scenes: SceneConfig[] = [
           delay: 0.1,
         },
       },
-      {
-        content: (
-          <p>
-            Expanding my skills to contribute across the entire development
-            process with ambition and drive. <br />
-            <a
-              className="underline underline-offset-2"
-              href="./img/CV_Shailash_Bhati.pdf"
-              target="_blank"
-            >
-              Check my CV
-            </a>
-          </p>
-        ),
-        animation: {
-          hidden: { opacity: 0, x: -100 },
-          visible: { opacity: 1, x: 0 },
-          delay: 0.2,
-        },
-      },
+
     ],
   },
 ];

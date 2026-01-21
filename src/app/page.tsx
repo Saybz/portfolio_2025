@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Image from "next/image";
 import ProjectPreviews from "./components/ProjectPreviews";
+import Navigation from "./components/Navigation";
 
 const SplineScene = dynamic(() => import("./components/SplineScene"), {
   ssr: false,
@@ -17,40 +18,6 @@ const SplineScene = dynamic(() => import("./components/SplineScene"), {
 const SplineSceneTeaser = dynamic(() => import("./components/SplineSceneTeaser"), {
   ssr: false,
 });
-
-const ProfileIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
-    <path d="M4 20a8 8 0 0 1 16 0" />
-  </svg>
-);
-
-const ProjectsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="4" width="7" height="7" rx="1.5" />
-    <rect x="14" y="4" width="7" height="7" rx="1.5" />
-    <rect x="3" y="13" width="7" height="7" rx="1.5" />
-    <rect x="14" y="13" width="7" height="7" rx="1.5" />
-  </svg>
-);
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -61,7 +28,6 @@ export default function Home() {
   const [isSceneMounted, setIsSceneMounted] = useState(false);
   const contentRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
   const titleRef = useRef<HTMLHeadingElement | null>(null); // Référence pour le titre
-  const dotRef = useRef<HTMLSpanElement | null>(null);
   const isMobile = () =>
     typeof window !== "undefined" && window.innerWidth <= 768; // Limite à ajuster si nécessaire
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -99,23 +65,24 @@ export default function Home() {
     []
   );
   // Animation du Dot dans le menu de navigation
-  const animateDot = (index: number) => {
-    if (isClientW() && dotRef.current) {
+  const animateDot = useCallback((index: number) => {
+    if (isClientW()) {
+      const dot = document.querySelector("#dot");
       const target = document.querySelector(`#nav-item-${index}`);
-      if (target) {
+      if (dot && target) {
         const { top, height, left, width } = target.getBoundingClientRect();
         const position = isMobile()
           ? { left: index * (width + 16) + width / 2 } // Animation horizontale pour mobile
           : { top: index * (height + 16) + height / 2 }; // Animation verticale pour desktop
 
-        gsap.to(dotRef.current, {
+        gsap.to(dot, {
           ...position,
           duration: 0.5,
           ease: "power3.out",
         });
       }
     }
-  };
+  }, []);
 
   const animateTitle = (direction: number) => {
     if (titleRef.current) {
@@ -279,17 +246,6 @@ export default function Home() {
     setIsClient(true);
   }, [touchStart, touchEnd, currentIndex, isAnimating, isLoading]);
 
-  // Repositionnement du dot du menu en fonction du device (mobile, desktop, etc)
-  useEffect(() => {
-    if (isClientW()) {
-      const handleResize = () => {
-        animateDot(currentIndex); // Met à jour la position du dot lors du redimensionnement
-      };
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
-    setIsClient(true);
-  }, [currentIndex]);
 
   // Monter la scène 3D légèrement après le premier rendu pour accélérer le paint initial
   useEffect(() => {
@@ -309,41 +265,16 @@ export default function Home() {
           <div className="loader"></div>
         </div>
       )}
-      <header
-        className={`fixed z-50 transform -translate-x-1/2 ${
-          isLoading ? "opacity-0 md:-right-12" : "opacity-1 md:right-0"
-        } ransition-all duration-500 bottom-4 delay-1000 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:left-auto md:top-1/2`}
-      >
-        <span
-          ref={dotRef}
-          id="dot"
-          className="absolute left-0 w-3 h-3 transition-transform duration-500 ease-in rounded-full md:left-auto -bottom-2 md:bottom-auto md:top-0 md:-right-4 bg-secondary"
-        ></span>
-        <nav>
-          <ul className="relative flex items-center md:flex-col">
-            {scenes.map((scene, index) => (
-              <li
-                key={index}
-                id={`nav-item-${index}`}
-                onClick={() => handleNavClick(index)}
-                className={`flex items-center justify-center m-2 w-14 h-14 rounded-xl border transition-all duration-500 cursor-pointer ${
-                  currentIndex === index
-                    ? "bg-secondary border-secondary text-primaryDark shadow-xl"
-                    : "border-[1px] border-secondary/30 bg-secondary/20 backdrop-blur-md text-secondary shadow-md hover:bg-secondary/30"
-                }`}
-              >
-                {index === 0 ? <ProfileIcon /> : <ProjectsIcon />}
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </header>
+      <Navigation
+        currentIndex={currentIndex}
+        onNavClick={handleNavClick}
+        isLoading={isLoading}
+        animateDot={animateDot}
+      />
       <main className="z-10 h-full text-dark max-w-main bg-primary">
         <div className="w-full pt-12 md:pt-16">
           <Suspense fallback={null}>
-            {/* <div style={{ width: "100vw", height: "100vh" }}>
-            <SplineSceneTeaser sceneUrl="https://prod.spline.design/your-scene-url/scene.splinecode" />
-          </div> */}
+
             {/* Ma scène */}
             <div className="fixed inset-0 z-0 pointer-events-none">
               {isClient && isSceneMounted && (
@@ -356,7 +287,7 @@ export default function Home() {
             </div>
           </Suspense>
           <div className="relative z-10 flex flex-col items-start justify-start xl:px-8">
-            <div className="relative flex items-center justify-between py-1 px-5 mb-8 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-3xl rounded-r-xl w-fit md:px-12 text-xxl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-big">
+            <div className="relative flex items-center justify-between py-1 px-4 mb-6 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-md rounded-r-md w-fit md:px-8 text-xl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-xxl">
               <h2 ref={titleRef} className="font-bold">
                 {scenes[currentIndex].title}
               </h2>

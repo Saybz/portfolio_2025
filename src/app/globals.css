@@ -68,7 +68,7 @@ a {
 }
 
 canvas {
-  height: 100vh !important;
+  height: 110vh !important;
 }
 
 @keyframes spin {

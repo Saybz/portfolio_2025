@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { projects } from "@/app/components/data/projects";
 
 type ProjectPreviewsProps = {
@@ -12,6 +13,7 @@ type ProjectPreviewsProps = {
 const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const cardRefs = useRef<HTMLAnchorElement[]>([]);
   const scrollRefs = useRef<HTMLDivElement[]>([]);
+  const titleRef = useRef<HTMLParagraphElement | null>(null);
 
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
@@ -19,6 +21,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   );
   const modalRef = useRef<HTMLDivElement | null>(null);
   const modalScrollRef = useRef<HTMLDivElement | null>(null);
+  const modalContentRef = useRef<HTMLDivElement | null>(null);
 
   // Détection simple du breakpoint pour ne rendre qu'une seule variante (desktop ou mobile)
   useEffect(() => {
@@ -40,6 +43,22 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     const timelines: gsap.core.Timeline[] = [];
 
     if (currentIndex === 1) {
+      // Animation d'entrée du titre
+      if (titleRef.current) {
+        gsap.fromTo(
+          titleRef.current,
+          { x: "-30px", opacity: 0, y: "0px" },
+          {
+            x: "0px",
+            y: "0px",
+            opacity: 1,
+            delay: 0.3,
+            duration: 0.8,
+            ease: "expo",
+          }
+        );
+      }
+
       // Entrée des cartes (sans scroll auto en preview)
       projects.forEach((project, index) => {
         const card = cardRefs.current[index];
@@ -53,7 +72,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
             opacity: 1,
             delay: 0.3 + index * 0.15,
             duration: 0.7,
-            ease: "power3.out",
+            ease: "expo",
           }
         );
 
@@ -63,14 +82,25 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         timelines.push(combined);
       });
     } else {
+      // Animation de sortie du titre
+      if (titleRef.current) {
+        gsap.to(titleRef.current, {
+          x: "-30px",
+          opacity: 0,
+          duration: 0.8,
+          ease: "expo",
+        });
+      }
+
       // Sortie quand on quitte l'index 1
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
         gsap.to(card, {
-          y: "50%",
+          y: "80%",
           opacity: 0,
+          delay: 0.3 + index * -0.1,
           duration: 0.5,
-          ease: "power3.in",
+          ease: "expo",
         });
       });
     }
@@ -80,16 +110,26 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     };
   }, [currentIndex]);
 
-  // Animation d'ouverture de la modale (slide depuis le haut)
+  // Animation d'ouverture de la modale (slide depuis le haut en mobile, depuis la droite en desktop)
   useEffect(() => {
     if (!selectedProjectId || !modalRef.current) return;
 
-    gsap.fromTo(
-      modalRef.current,
-      { y: "-100%" },
-      { y: "0%", duration: 0.6, ease: "power3.out" }
-    );
-  }, [selectedProjectId]);
+    if (isDesktop) {
+      // Desktop : animation depuis la droite
+      gsap.fromTo(
+        modalRef.current,
+        { x: "20%" },
+        { x: "-30%", opacity: 1, duration: 0.6, ease: "expo" }
+      );
+    } else {
+      // Mobile : animation depuis le bas
+      gsap.fromTo(
+        modalRef.current,
+        { y: "-20%" },
+        { y: "5%", opacity: 1, duration: 0.6, ease: "expo" }
+      );
+    }
+  }, [selectedProjectId, isDesktop]);
 
   // Animation de scroll de l'image dans la modale uniquement
   useEffect(() => {
@@ -106,37 +146,37 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         scrollTop: midScroll,
         duration: 2.1,
         delay: 1,
-        ease: "none",
+        ease: "expo",
       })
       // Pause milieu
       .to(scroller, {
         scrollTop: midScroll,
         duration: 1,
-        ease: "none",
+        ease: "expo",
       })
       // Milieu -> bas
       .to(scroller, {
         scrollTop: maxScroll,
         duration: 2.1,
-        ease: "none",
+        ease: "expo",
       })
       // Pause bas
       .to(scroller, {
         scrollTop: maxScroll,
         duration: 1,
-        ease: "none",
+        ease: "expo",
       })
       // Bas -> haut
       .to(scroller, {
         scrollTop: 0,
         duration: 2.1,
-        ease: "none",
+        ease: "expo",
       })
       // Pause haut
       .to(scroller, {
         scrollTop: 0,
         duration: 1,
-        ease: "none",
+        ease: "expo",
       });
 
     return () => {
@@ -144,88 +184,142 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     };
   }, [selectedProjectId]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     if (modalRef.current) {
-      gsap.to(modalRef.current, {
-        y: "-100%",
-        duration: 0.4,
-        ease: "power3.in",
-        onComplete: () => setSelectedProjectId(null),
-      });
+      if (isDesktop) {
+        // Desktop : sortie vers la droite
+        gsap.to(modalRef.current, {
+          x: "10%",
+          opacity: 0,
+          duration: 0.4,
+          ease: "expo3.in",
+          onComplete: () => setSelectedProjectId(null),
+        });
+      } else {
+        // Mobile : sortie vers le haut
+        gsap.to(modalRef.current, {
+          y: "-20%",
+          opacity: 0,
+          duration: 0.4,
+          ease: "expo3.in",
+          onComplete: () => setSelectedProjectId(null),
+        });
+      }
     } else {
       setSelectedProjectId(null);
     }
-  };
+  }, [isDesktop]);
+
+  // Fermer la modale si on change d'index
+  useEffect(() => {
+    if (selectedProjectId && currentIndex !== 1) {
+      handleCloseModal();
+    }
+  }, [currentIndex, selectedProjectId, handleCloseModal, isDesktop]);
+
+  // Empêcher la propagation du scroll de la modale vers la page principale
+  useEffect(() => {
+    const modalContent = modalContentRef.current;
+    if (!modalContent || !selectedProjectId) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.stopPropagation();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.stopPropagation();
+    };
+
+    modalContent.addEventListener("wheel", handleWheel, { passive: false });
+    modalContent.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      modalContent.removeEventListener("wheel", handleWheel);
+      modalContent.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [selectedProjectId]);
 
   // Layout commun : liste horizontale centrée en bas (desktop et mobile)
-  const containerClass =
-    "pointer-events-auto fixed bottom-24 left-1/2 z-20 flex w-[90vw] -translate-x-1/2 gap-4 overflow-x-auto px-2 justify-center hide-scrollbar";
+  const containerClass = `flex-col fixed bottom-28 left-1/2 z-40 flex w-[100vw] -translate-x-1/2 gap-4 justify-start ${
+    currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
+  }`;
+  
+  const cardsContainerClass = `flex flex-row gap-4 overflow-x-auto hide-scrollbar px-4 ${
+    currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
+  }`;
 
-  const cardClassDesktop =
-    "group relative flex-shrink-0 overflow-hidden rounded-md border border-secondary/60 bg-primary/5 shadow-lg w-[220px] h-[140px]";
-  const cardClassMobile =
-    "group relative flex-shrink-0 overflow-hidden rounded-md border border-secondary/60 bg-primary/5 shadow-lg w-[180px] h-[120px]";
+  const getCardClass = (projectId: string, isDesktop: boolean) => {
+    const baseClass = isDesktop
+      ? "group relative cursor-pointer flex-shrink-0 overflow-hidden rounded-md border bg-primary/5 shadow-lg w-[220px] h-[120px]"
+      : "group relative cursor-pointer flex-shrink-0 overflow-hidden rounded-md border bg-primary/5 shadow-lg w-[160px] h-[88px]";
+    
+    const isSelected = selectedProjectId === projectId;
+    const borderClass = isSelected
+      ? "border-secondary/90 border-4"
+      : "border-secondary/60";
+    
+    return `${baseClass} ${borderClass}`;
+  };
 
   return (
     <>
       <div className={containerClass}>
+        <p ref={titleRef} className="text-md text-light-700 opacity-0 mb-2 px-4">
+          Some projects
+        </p>
+        <div className={cardsContainerClass}>
         {projects.map((project, index) => (
-          <a
-            key={project.id}
-            ref={(el) => {
-              if (el) cardRefs.current[index] = el;
-            }}
-            href={project.url}
-            onClick={(e) => {
-              e.preventDefault();
-              setSelectedProjectId(project.id);
-            }}
-            className={isDesktop ? cardClassDesktop : cardClassMobile}
-          >
-            <div
-              ref={(el) => {
-                if (el) scrollRefs.current[index] = el;
-              }}
-              className="relative h-full w-full overflow-hidden"
+            <a
+                key={project.id}
+                ref={(el) => {
+                if (el) cardRefs.current[index] = el;
+                }}
+                onClick={(e) => {
+                e.preventDefault();
+                setSelectedProjectId(project.id);
+                }}
+                className={getCardClass(project.id, isDesktop)}
             >
-              <Image
-                src={project.imageSrc}
-                alt={project.name}
-                className="block w-full"
-                width={project.imageWidth}
-                height={project.imageHeight}
-              />
+                <div
+                ref={(el) => {
+                    if (el) scrollRefs.current[index] = el;
+                }}
+                className="relative h-full w-full overflow-hidden"
+                >
+                <Image
+                    src={project.imageSrc}
+                    alt={project.name}
+                    className="block w-full"
+                    width={project.imageWidth}
+                    height={project.imageHeight}
+                />
 
-              {/* Overlay de hover avec nom du projet */}
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <span className="px-3 py-1 text-md font-semibold text-light">
-                  {project.name}
-                </span>
-              </div>
-            </div>
-            <span className="sr-only">{`Ouvrir le projet ${project.name}`}</span>
-          </a>
-        ))}
+                {/* Overlay de hover avec nom du projet */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span className="px-3 py-1 text-md font-semibold text-light">
+                    {project.name}
+                    </span>
+                </div>
+                </div>
+                <span className="sr-only">{`Ouvrir le projet ${project.name}`}</span>
+            </a>
+            ))}
+        </div>
       </div>
+
 
       {/* Carte détaillée légèrement plus haute que le centre */}
       {selectedProject && (
-        <div className="pointer-events-none fixed inset-0 z-30 flex items-start justify-center pt-12 md:pt-10">
-          {/* Overlay */}
-          <div
-            className="pointer-events-auto absolute inset-0 bg-black/40"
-            onClick={handleCloseModal}
-          />
-
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center md:justify-end md:pr-4">
           {/* Carte */}
           <div
             ref={modalRef}
-            className="pointer-events-auto relative z-10 w-[100vw] max-w-xl py-10 overflow-hidden bg-primaryDark rounded-sm shadow-2xl -translate-y-full"
+            className="pointer-events-auto relative z-10 w-[90vw] max-w-md h-[80vh] max-h-[580px] md:max-h-[600px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl md:max-w-sm md:translate-y-[10%] md:translate-x-[30%] border border-secondary/10 opacity-0"
           >
             {/* Image au-dessus avec scroll animé */}
             <div
               ref={modalScrollRef}
-              className="relative h-64 w-full overflow-hidden"
+              className="relative h-48 w-full flex-shrink-0 overflow-hidden"
             >
               <Image
                 src={selectedProject.imageSrc}
@@ -236,37 +330,41 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
               />
             </div>
 
-            {/* Contenu texte */}
-            <div className="space-y-3 p-4 text-light">
+            {/* Contenu texte scrollable */}
+            <div
+              ref={modalContentRef}
+              className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-lg font-semibold">
-                    {selectedProject.name}
+                    
+                  <h3 className="mb-2 text-gray-400">
+                   Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
                   </h3>
-                  <p className="text-xs uppercase tracking-wide opacity-70">
-                    {selectedProject.cadre}
+                  <p className="text-xs text-gray-400">
+                    Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="text-xs uppercase tracking-wide opacity-70 hover:opacity-100"
+                  className="text-xs text-red-400  opacity-70 hover:opacity-100 backdrop-blur-md rounded-md border border-red-400/30 bg-red-400/20 px-2 py-1 text-red-400"
                 >
-                  Fermer
+                  Close
                 </button>
               </div>
 
-              <p className="text-sm">{selectedProject.description}</p>
+              <p className="text-base text-gray-300">{selectedProject.description}</p>
 
               <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide opacity-70">
-                  Stack utilisée
+                <p className="mb-1 text-xs opacity-60">
+                  Stack used :
                 </p>
                 <div className="flex flex-wrap gap-2 text-xs">
                   {selectedProject.stack.map((tech) => (
                     <span
                       key={tech}
-                      className="rounded-md bg-secondary/10 px-2 py-1"
+                      className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
                     >
                       {tech}
                     </span>
@@ -279,9 +377,10 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   href={selectedProject.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-md border border-secondary/30 bg-secondary/20 backdrop-blur-md px-4 py-2 text-xs font-semibold uppercase tracking-wide text-light shadow hover:bg-secondary/30 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-md border border-secondary/30 bg-secondary/20 backdrop-blur-md px-4 py-2 text-xs font-regular text-secondary/70 shadow hover:bg-secondary/30 hover:border-secondary/60 hover:text-secondary/80 transition-colors"
                 >
-                  Voir le site
+                  Go to project
+                  <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
