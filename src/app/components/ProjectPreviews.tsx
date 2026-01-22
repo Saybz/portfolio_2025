@@ -245,8 +245,8 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         gsap.to(modalRef.current, {
           x: "50px",
           opacity: 0,
-          duration: 0.4,
-          ease: "expo3.in",
+          duration: 0.3,
+          ease: "expo",
           onComplete: () => {
             setSelectedProjectId(null);
             previousProjectIdRef.current = null;
@@ -257,8 +257,8 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         gsap.to(modalRef.current, {
           y: "-20%",
           opacity: 0,
-          duration: 0.4,
-          ease: "expo3.in",
+          duration: 0.3,
+          ease: "expo",
           onComplete: () => {
             setSelectedProjectId(null);
             previousProjectIdRef.current = null;
@@ -335,7 +335,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     <>
       <div 
         ref={containerRef}
-        className={`relative z-40 w-full max-w-main mx-auto md:h-screen ${
+        className={`relative z-40 w-full max-w-main mx-auto mb-24 md:mb-0 md:h-screen ${
           currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
         }`}
         onClick={(e) => {
@@ -351,7 +351,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
           }
         }}
       >
-        <div className="flex justify-center w-full h-full px-4 pb-26 md:pb-0 md:items-center md:justify-end">
+        <div className="flex justify-center w-full h-full px-4 md:items-center md:justify-end">
           <div 
             className={`relative flex w-max ${
               isDesktop ? 'flex-col py-2' : 'flex-col'
