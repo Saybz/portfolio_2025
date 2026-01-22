@@ -38,16 +38,16 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <header
       className={`fixed z-50 transform -translate-x-1/2 ${
-        isLoading ? "opacity-0 md:-right-12" : "opacity-1 md:right-0"
-      } ransition-all duration-500 bottom-4 delay-1000 left-1/2 md:bottom-auto md-translate-x-0 md:-translate-y-1/2 md:left-auto md:top-1/2`}
+        isLoading ? "opacity-0" : "opacity-1"
+      } transition-all duration-500 bottom-4 delay-1000 left-1/2`}
     >
       <span
         ref={dotRef}
         id="dot"
-        className="absolute left-0 w-3 h-3 transition-transform duration-500 ease-in rounded-full md:left-auto -bottom-2 md:bottom-auto md:top-0 md:-right-4 bg-secondary"
+        className="absolute left-0 w-2 h-2 transition-transform duration-500 ease-in rounded-full -bottom-2 bg-secondary"
       ></span>
       <nav>
-        <ul className="relative flex items-center md:flex-col">
+        <ul className="relative flex items-center">
           {scenes.map((scene, index) => (
             <li
               key={index}

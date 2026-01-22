@@ -70,16 +70,24 @@ export default function Home() {
       const dot = document.querySelector("#dot");
       const target = document.querySelector(`#nav-item-${index}`);
       if (dot && target) {
-        const { top, height, left, width } = target.getBoundingClientRect();
-        const position = isMobile()
-          ? { left: index * (width + 16) + width / 2 } // Animation horizontale pour mobile
-          : { top: index * (height + 16) + height / 2 }; // Animation verticale pour desktop
+        const targetRect = target.getBoundingClientRect();
+        const dotRect = dot.getBoundingClientRect();
+        const navRect = target.closest('nav')?.getBoundingClientRect();
+        
+        if (navRect) {
+          // Calculer la position relative au nav
+          const targetCenterX = targetRect.left + targetRect.width / 2 - navRect.left;
+          const dotWidth = dotRect.width;
+          
+          // Centrer le dot par rapport au centre du bouton
+          const position = { left: targetCenterX - dotWidth / 2 };
 
-        gsap.to(dot, {
-          ...position,
-          duration: 0.5,
-          ease: "power3.out",
-        });
+          gsap.to(dot, {
+            ...position,
+            duration: 0.5,
+            ease: "power3.out",
+          });
+        }
       }
     }
   }, []);

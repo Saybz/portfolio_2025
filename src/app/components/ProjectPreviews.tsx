@@ -23,6 +23,9 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const modalScrollRef = useRef<HTMLDivElement | null>(null);
   const modalContentRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const modalImageRef = useRef<HTMLDivElement | null>(null);
+  const previousProjectIdRef = useRef<string | null>(null);
 
   // Détection simple du breakpoint pour ne rendre qu'une seule variante (desktop ou mobile)
   useEffect(() => {
@@ -113,23 +116,62 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
 
   // Animation d'ouverture de la modale (slide depuis le haut en mobile, depuis la droite en desktop)
   useEffect(() => {
-    if (!selectedProjectId || !modalRef.current) return;
+    if (!selectedProjectId) return;
 
-    if (isDesktop) {
-      // Desktop : animation depuis la droite
+    const isFirstOpen = previousProjectIdRef.current === null;
+    const isProjectChange = previousProjectIdRef.current !== null && previousProjectIdRef.current !== selectedProjectId;
+
+    // Animation de l'overlay uniquement à l'ouverture initiale
+    if (isFirstOpen && overlayRef.current) {
       gsap.fromTo(
-        modalRef.current,
-        { x: "20%" },
-        { x: "-30%", opacity: 1, duration: 0.6, ease: "expo" }
-      );
-    } else {
-      // Mobile : animation depuis le bas
-      gsap.fromTo(
-        modalRef.current,
-        { y: "-20%" },
-        { y: "5%", opacity: 1, duration: 0.6, ease: "expo" }
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" }
       );
     }
+
+    // Animation de la modale uniquement à l'ouverture initiale
+    if (isFirstOpen && modalRef.current) {
+      if (isDesktop) {
+        // Desktop : animation depuis la droite (à côté de la liste)
+        gsap.fromTo(
+          modalRef.current,
+          { x: "50px", opacity: 0 },
+          { x: "0", opacity: 1, duration: 0.6, ease: "expo" }
+        );
+      } else {
+        // Mobile : animation depuis le bas
+        gsap.fromTo(
+          modalRef.current,
+          { y: "-20%" },
+          { y: "5%", opacity: 1, duration: 0.6, ease: "expo" }
+        );
+      }
+    }
+
+    // Animation de transition du contenu lors du changement de projet
+    if (isProjectChange) {
+      if (modalImageRef.current) {
+        gsap.fromTo(
+          modalImageRef.current,
+          { opacity: 0, y: -10 },
+          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+        );
+      }
+      if (modalContentRef.current) {
+        gsap.fromTo(
+          modalContentRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.4, ease: "power2.out" }
+        );
+      }
+      // Réinitialiser le scroll de l'image
+      if (modalScrollRef.current) {
+        modalScrollRef.current.scrollTop = 0;
+      }
+    }
+
+    previousProjectIdRef.current = selectedProjectId;
   }, [selectedProjectId, isDesktop]);
 
   // Animation de scroll de l'image dans la modale uniquement
@@ -186,15 +228,28 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   }, [selectedProjectId]);
 
   const handleCloseModal = useCallback(() => {
+    // Animation de sortie de l'overlay
+    if (overlayRef.current) {
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in",
+      });
+    }
+
+    // Animation de sortie de la modale
     if (modalRef.current) {
       if (isDesktop) {
         // Desktop : sortie vers la droite
         gsap.to(modalRef.current, {
-          x: "10%",
+          x: "50px",
           opacity: 0,
           duration: 0.4,
           ease: "expo3.in",
-          onComplete: () => setSelectedProjectId(null),
+          onComplete: () => {
+            setSelectedProjectId(null);
+            previousProjectIdRef.current = null;
+          },
         });
       } else {
         // Mobile : sortie vers le haut
@@ -203,11 +258,15 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
           opacity: 0,
           duration: 0.4,
           ease: "expo3.in",
-          onComplete: () => setSelectedProjectId(null),
+          onComplete: () => {
+            setSelectedProjectId(null);
+            previousProjectIdRef.current = null;
+          },
         });
       }
     } else {
       setSelectedProjectId(null);
+      previousProjectIdRef.current = null;
     }
   }, [isDesktop]);
 
@@ -240,18 +299,32 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     };
   }, [selectedProjectId]);
 
-  // Layout commun : liste horizontale centrée en bas (desktop et mobile)
-  const containerClass = `flex-col fixed  py-2 bottom-28 left-1/2 z-40 flex w-full max-w-main -translate-x-1/2 gap-4 justify-start xl:px-8 ${
+  // Layout : desktop (colonne à droite) et mobile (horizontal en bas)
+  const containerClass = `fixed z-40 flex gap-4 ${
+    isDesktop
+      ? `flex-col xl:right-8 right-4 top-1/2 -translate-y-1/2 py-2`
+      : `flex-col bottom-28 left-1/2 -translate-x-1/2 w-full max-w-main xl:px-8`
+  } ${
     currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
   }`;
   
-  const cardsContainerClass = `flex flex-row gap-4 overflow-x-auto hide-scrollbar px-4 ${
+  const cardsContainerClass = `flex gap-4 ${
+    isDesktop
+      ? `flex-col overflow-y-auto p-2 hide-scrollbar max-h-[60vh]`
+      : `flex-row overflow-x-auto hide-scrollbar px-4`
+  } ${
     currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
   }`;
+  
+  // S'assurer que les cartes sont au-dessus de l'overlay et peuvent être cliquées
+  const cardClickHandler = (e: React.MouseEvent, projectId: string) => {
+    e.stopPropagation();
+    setSelectedProjectId(projectId);
+  };
 
   const getCardClass = (projectId: string, isDesktop: boolean) => {
     const baseClass = isDesktop
-      ? "group relative overflow-hidden rounded-md w-[220px] h-[120px]"
+      ? "group relative overflow-hidden rounded-md w-[240px] h-[135px]"
       : "group relative overflow-hidden rounded-md w-[160px] h-[88px]";
     
     return baseClass;
@@ -259,139 +332,238 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
 
   return (
     <>
-      <div className={containerClass}>
-        <p ref={titleRef} className="text-md text-light/70 opacity-0 px-4">
-          Some projects :
-        </p>
-        <div className={cardsContainerClass}>
-        {projects.map((project, index) => {
-          const isSelected = selectedProjectId === project.id;
-          return (
-            <a
-              key={project.id}
-              ref={(el) => {
-                if (el) cardRefs.current[index] = el;
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                setSelectedProjectId(project.id);
-              }}
-              className={`pushable-card pushable-card-secondary flex-shrink-0 ${isSelected ? 'ring-4 ring-secondary/90' : ''}`}
-            >
-              <div className={`front ${getCardClass(project.id, isDesktop)}`}>
-                <div
-                  ref={(el) => {
-                    if (el) scrollRefs.current[index] = el;
-                  }}
-                  className="relative h-full w-full overflow-hidden rounded-md"
-                >
-                  <Image
-                    src={project.imageSrc}
-                    alt={project.name}
-                    className="block w-full"
-                    width={project.imageWidth}
-                    height={project.imageHeight}
-                  />
+      <div className={`fixed z-40 ${
+        isDesktop
+          ? `xl:right-8 right-4 top-1/2 -translate-y-1/2`
+          : `bottom-28 left-1/2 -translate-x-1/2 w-full max-w-main xl:px-8`
+      }`}>
+        <div className={`relative flex gap-4 ${
+          isDesktop ? 'flex-col py-2' : 'flex-col'
+        } ${
+          currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}>
+          <p ref={titleRef} className={`text-md text-light/70 opacity-0 ${isDesktop ? 'px-0' : 'px-4'}`}>
+            Some projects :
+          </p>
+          <div className={cardsContainerClass}>
+          {projects.map((project, index) => {
+            return (
+              <a
+                key={project.id}
+                ref={(el) => {
+                  if (el) cardRefs.current[index] = el;
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  cardClickHandler(e, project.id);
+                }}
+                className="pushable-card pushable-card-secondary flex-shrink-0"
+              >
+                <div className={`front ${getCardClass(project.id, isDesktop)}`}>
+                  <div
+                    ref={(el) => {
+                      if (el) scrollRefs.current[index] = el;
+                    }}
+                    className="relative h-full w-full overflow-hidden rounded-md"
+                  >
+                    <Image
+                      src={project.imageSrc}
+                      alt={project.name}
+                      className="block w-full"
+                      width={project.imageWidth}
+                      height={project.imageHeight}
+                    />
 
-                  {/* Overlay de hover avec nom du projet */}
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span className="px-3 py-1 text-md font-semibold text-light">
-                      {project.name}
-                    </span>
+                    {/* Overlay de hover avec nom du projet */}
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <span className="px-3 py-1 text-md font-semibold text-light">
+                        {project.name}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <span className="sr-only">{`Ouvrir le projet ${project.name}`}</span>
+              </a>
+            );
+          })}
+          </div>
+
+          {/* Carte détaillée légèrement plus haute que le centre - Desktop */}
+          {selectedProject && isDesktop && (
+            <div 
+              ref={modalRef}
+              className="pointer-events-auto absolute z-50 right-full mr-[100px] top-1/2 -translate-y-1/2 w-[90vw] max-w-sm h-[80vh] max-h-[600px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Image au-dessus avec scroll animé */}
+              <div
+                ref={modalScrollRef}
+                className="relative h-48 w-full flex-shrink-0 overflow-hidden"
+              >
+                <div ref={modalImageRef}>
+                  <Image
+                    src={selectedProject.imageSrc}
+                    alt={selectedProject.name}
+                    className="block w-full"
+                    width={selectedProject.imageWidth}
+                    height={selectedProject.imageHeight}
+                  />
+                </div>
               </div>
-              <span className="sr-only">{`Ouvrir le projet ${project.name}`}</span>
-            </a>
-          );
-        })}
+
+              {/* Contenu texte scrollable */}
+              <div
+                ref={modalContentRef}
+                className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="mb-2 text-gray-400">
+                     Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
+                    </p>
+                  </div>
+                  <Button
+                    variant="pushable"
+                    color="red"
+                    size="sm"
+                    onClick={handleCloseModal}
+                    iconPosition="left"
+                  >
+                    Close
+                  </Button>
+                </div>
+
+                <p className="text-base text-gray-300">{selectedProject.description}</p>
+
+                <div>
+                  <p className="mb-1 text-xs opacity-60">
+                    Stack used :
+                  </p>
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {selectedProject.stack.map((tech) => (
+                      <span
+                        key={tech}
+                        className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    variant="pushable"
+                    href={selectedProject.url}
+                    color="secondary"
+                    external
+                    icon={MoveRight}
+                    iconPosition="right"
+                  >
+                    Go to project
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-
-      {/* Carte détaillée légèrement plus haute que le centre */}
+      {/* Overlay assombri */}
       {selectedProject && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center md:justify-end md:pr-4">
-          {/* Carte */}
-          <div
-            ref={modalRef}
-            className="pointer-events-auto relative z-10 w-[90vw] max-w-md h-[80vh] max-h-[580px] md:max-h-[600px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl md:max-w-sm md:translate-y-[10%] md:translate-x-[30%] border border-secondary/10 opacity-0"
-          >
-
-            {/* Image au-dessus avec scroll animé */}
-            <div
-              ref={modalScrollRef}
-              className="relative h-48 w-full flex-shrink-0 overflow-hidden"
-            >
-              <Image
-                src={selectedProject.imageSrc}
-                alt={selectedProject.name}
-                className="block w-full"
-                width={selectedProject.imageWidth}
-                height={selectedProject.imageHeight}
-              />
-            </div>
-
-            {/* Contenu texte scrollable */}
-            <div
-              ref={modalContentRef}
-              className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                    
-                  <h3 className="mb-2 text-gray-400">
-                   Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
-                  </p>
-                </div>
-                <Button
-                  variant="pushable"
-                  color="red"
-                  size="sm"
-                  onClick={handleCloseModal}
-                  iconPosition="left"
-                >
-                  Close
-                </Button>
-              </div>
-
-              <p className="text-base text-gray-300">{selectedProject.description}</p>
-
-              <div>
-                <p className="mb-1 text-xs opacity-60">
-                  Stack used :
-                </p>
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {selectedProject.stack.map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Button
-                  variant="pushable"
-                  href={selectedProject.url}
-                  color="secondary"
-                  external
-                  icon={MoveRight}
-                  iconPosition="right"
-                >
-                  Go to project
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div
+          ref={overlayRef}
+          className="fixed inset-0 z-30 bg-black/60"
+          onClick={handleCloseModal}
+        />
       )}
+
+      {/* Carte détaillée - Mobile */}
+      {selectedProject && !isDesktop && (
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center md:justify-end md:pr-4">
+              <div
+                ref={modalRef}
+                className="pointer-events-auto relative z-10 w-[90vw] max-w-md h-[80vh] max-h-[580px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Image au-dessus avec scroll animé */}
+                <div
+                  ref={modalScrollRef}
+                  className="relative h-48 w-full flex-shrink-0 overflow-hidden"
+                >
+                  <div ref={modalImageRef}>
+                    <Image
+                      src={selectedProject.imageSrc}
+                      alt={selectedProject.name}
+                      className="block w-full"
+                      width={selectedProject.imageWidth}
+                      height={selectedProject.imageHeight}
+                    />
+                  </div>
+                </div>
+
+                {/* Contenu texte scrollable */}
+                <div
+                  ref={modalContentRef}
+                  className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="mb-2 text-gray-400">
+                       Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
+                      </p>
+                    </div>
+                    <Button
+                      variant="pushable"
+                      color="red"
+                      size="sm"
+                      onClick={handleCloseModal}
+                      iconPosition="left"
+                    >
+                      Close
+                    </Button>
+                  </div>
+
+                  <p className="text-base text-gray-300">{selectedProject.description}</p>
+
+                  <div>
+                    <p className="mb-1 text-xs opacity-60">
+                      Stack used :
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      {selectedProject.stack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <Button
+                      variant="pushable"
+                      href={selectedProject.url}
+                      color="secondary"
+                      external
+                      icon={MoveRight}
+                      iconPosition="right"
+                    >
+                      Go to project
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
     </>
   );
 };

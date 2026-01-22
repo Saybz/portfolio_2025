@@ -23,7 +23,7 @@ module.exports = {
         vmain: "6rem",
       },
       maxHeight: {
-        desktop: "1440px",
+        desktop: "1920px",
       },
       boxShadow: {
         stroke: "0 35px 60px -15px rgba(0, 0, 0, 0.3)",
