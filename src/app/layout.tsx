@@ -3,8 +3,8 @@ import { Comfortaa, Poppins } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata = {
-  title: "Shailash Bhati",
-  description: "My portfolio, my rules",
+  title: "Shailash Bhati | Frontend Developer",
+  description: "Portfolio de Shailash Bhati, Frontend Developer",
 };
 
 const comfortaa = Comfortaa({
