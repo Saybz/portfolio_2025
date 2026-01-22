@@ -271,7 +271,7 @@ export default function Home() {
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-primaryDark">
           <div className="flex flex-col items-center gap-4">
-            <p className="text-light text-lg font-semibold">Loading...</p>
+            <p className="text-lg font-semibold text-light">Loading...</p>
             <div className="arcade-progress-bar">
               {Array.from({ length: 16 }).map((_, index) => (
                 <div
@@ -292,8 +292,8 @@ export default function Home() {
         isLoading={isLoading}
         animateDot={animateDot}
       />
-      <main className="z-10 h-full text-light max-w-main bg-primaryDark">
-        <div className="w-full pt-12 md:pt-16">
+      <main className="z-10 h-screen text-light max-w-main bg-primaryDark">
+        <div className="w-full h-full">
           <Suspense fallback={null}>
 
             {/* Ma scène */}
@@ -307,22 +307,24 @@ export default function Home() {
               )}
             </div>
           </Suspense>
-          <div className="relative z-10 flex flex-col items-start justify-start xl:px-8">
-            <div className="relative flex items-center justify-between py-1 px-4 mb-6 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-md rounded-r-md w-fit md:px-8 text-xl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-xxl">
-              <h2 ref={titleRef} className="font-bold">
-                {scenes[currentIndex].title}
-              </h2>
-            </div>
-            <div className="max-w-md px-4 xl:p-x-0 text-light">
-              {scenes[currentIndex].elements.map((item, index) => (
-                <div
+          <div className="relative z-10 flex flex-col items-start justify-between h-full md:flex-row md:justify-start xl:px-8">
+            <div className="flex flex-col items-start justify-between pt-6 md:justify-start md:pt-16">
+              <div className="relative flex items-center justify-between py-1 px-4 mb-6 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-md rounded-r-md w-fit md:px-8 text-xl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-xxl">
+                <h2 ref={titleRef} className="font-bold">
+                  {scenes[currentIndex].title}
+                </h2>
+              </div>
+              <div className="max-w-md px-4 xl:p-x-0 text-light">
+                {scenes[currentIndex].elements.map((item, index) => (
+                  <div
                   key={index}
                   ref={(el) => setRef(currentIndex, index, el)}
                   className="section-item"
-                >
-                  {item.content}
-                </div>
-              ))}
+                  >
+                    {item.content}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <ProjectPreviews currentIndex={currentIndex} />
