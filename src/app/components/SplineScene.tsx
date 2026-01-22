@@ -20,6 +20,60 @@ const SplineScene: React.FC<SplineSceneProps> = ({
   // État pour gérer les erreurs
   const [error, setError] = useState<string | null>(null);
 
+  // Filtrer les erreurs CORS de Spline dans la console
+  useEffect(() => {
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
+    // Intercepter console.error
+    console.error = (...args: any[]) => {
+      const errorMessage = args[0]?.toString() || "";
+      // Ignorer les erreurs CORS de Spline
+      if (
+        errorMessage.includes("CORS") &&
+        (errorMessage.includes("hooks.spline.design") ||
+          errorMessage.includes("spline.design"))
+      ) {
+        return;
+      }
+      originalError.apply(console, args);
+    };
+
+    // Intercepter console.warn
+    console.warn = (...args: any[]) => {
+      const warnMessage = args[0]?.toString() || "";
+      // Ignorer les warnings CORS de Spline
+      if (
+        warnMessage.includes("CORS") &&
+        (warnMessage.includes("hooks.spline.design") ||
+          warnMessage.includes("spline.design"))
+      ) {
+        return;
+      }
+      originalWarn.apply(console, args);
+    };
+
+    // Intercepter les erreurs non gérées
+    const handleError = (event: ErrorEvent) => {
+      if (
+        event.message?.includes("CORS") &&
+        (event.message.includes("hooks.spline.design") ||
+          event.message.includes("spline.design"))
+      ) {
+        event.preventDefault();
+        return false;
+      }
+    };
+
+    window.addEventListener("error", handleError);
+
+    return () => {
+      console.error = originalError;
+      console.warn = originalWarn;
+      window.removeEventListener("error", handleError);
+    };
+  }, []);
+
   // Fonction pour activer/désactiver les ombres d'un objet
   const toggleShadows = (object: any, enable: boolean) => {
     if (object) {
@@ -49,7 +103,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({
           objectsRef.current[name] = object;
           toggleShadows(object, false); // Désactiver les ombres par défaut
         } else {
-          console.warn(`Spline object "${name}" not found in scene`);
+          // console.warn(`Spline object "${name}" not found in scene`);
         }
       } catch (err) {
         setError(`Erreur lors du chargement de l'objet ${name}: ${err}`);
