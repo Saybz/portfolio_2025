@@ -83,7 +83,7 @@ export const scenes: SceneConfig[] = [
       {
         content: (
           <p className="mb-6 text-gray-300">
-            Passionate <span className="font-bold text-light">front-end developer</span> with a strong focus on <span className="font-bold text-light">UX</span> and user experience. I enjoy understanding and contributing to every stage of a project in order to create <span className="font-bold text-light">coherent, useful, and efficient interfaces</span>.
+            Passionate <span className="font-bold text-light">front-end developer</span> with a strong focus on <span className="font-bold text-light">user experience</span>. I enjoy understanding and contributing to every stage of a project in order to create <span className="font-bold text-light">coherent, useful, and efficient interfaces</span>.
           </p>
         ),
         animation: {

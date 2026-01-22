@@ -264,8 +264,8 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   return (
     <>
       <div className={containerClass}>
-        <p ref={titleRef} className="text-md text-light-700 opacity-0 mb-2 px-4">
-          Some projects
+        <p ref={titleRef} className="text-md text-light/70 opacity-0 px-4">
+          Some projects :
         </p>
         <div className={cardsContainerClass}>
         {projects.map((project, index) => (

@@ -156,7 +156,7 @@ const SplineScene: React.FC<SplineSceneProps> = ({
       {error && <div className="error-message">{error}</div>}
 
       <Spline
-        scene={splineUrl}
+        scene="scene.splinecode"
         onLoad={(spline) => {
           try {
             splineRef.current = spline;
