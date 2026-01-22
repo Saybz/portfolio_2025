@@ -311,7 +311,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const cardsContainerClass = `flex gap-4 ${
     isDesktop
       ? `flex-col overflow-y-auto p-2 hide-scrollbar max-h-[60vh]`
-      : `flex-row overflow-x-auto hide-scrollbar px-4`
+      : `flex-row overflow-x-auto hide-scrollbar p-4`
   } ${
     currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
   }`;
@@ -325,27 +325,24 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const getCardClass = (projectId: string, isDesktop: boolean) => {
     const baseClass = isDesktop
       ? "group relative overflow-hidden rounded-md w-[240px] h-[135px]"
-      : "group relative overflow-hidden rounded-md w-[160px] h-[88px]";
+      : "group relative overflow-hidden rounded-md w-[150px] h-[80px]";
     
     return baseClass;
   };
 
   return (
     <>
-      <div className={`fixed z-40 ${
-        isDesktop
-          ? `xl:right-8 right-4 top-1/2 -translate-y-1/2`
-          : `bottom-28 left-1/2 -translate-x-1/2 w-full max-w-main xl:px-8`
+      <div className={`relative z-40 w-full max-w-main mx-auto md:h-screen ${
+        currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
       }`}>
-        <div className={`relative flex gap-4 ${
-          isDesktop ? 'flex-col py-2' : 'flex-col'
-        } ${
-          currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
-        }`}>
-          <p ref={titleRef} className={`text-md text-light/70 opacity-0 ${isDesktop ? 'px-0' : 'px-4'}`}>
-            Some projects :
-          </p>
-          <div className={cardsContainerClass}>
+        <div className="flex justify-center w-full h-full px-4 pb-20 md:pb-0 md:items-center md:justify-end">
+          <div className={`relative flex w-max ${
+            isDesktop ? 'flex-col py-2' : 'flex-col'
+          }`}>
+            <p ref={titleRef} className="pl-4 text-sm opacity-0 text-light/70">
+              Some projects :
+            </p>
+            <div className={cardsContainerClass}>
           {projects.map((project, index) => {
             return (
               <a
@@ -357,14 +354,14 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   e.preventDefault();
                   cardClickHandler(e, project.id);
                 }}
-                className="pushable-card pushable-card-secondary flex-shrink-0"
+                className="flex-shrink-0 pushable-card pushable-card-secondary"
               >
                 <div className={`front ${getCardClass(project.id, isDesktop)}`}>
                   <div
                     ref={(el) => {
                       if (el) scrollRefs.current[index] = el;
                     }}
-                    className="relative h-full w-full overflow-hidden rounded-md"
+                    className="relative w-full h-full overflow-hidden rounded-md"
                   >
                     <Image
                       src={project.imageSrc}
@@ -375,8 +372,8 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                     />
 
                     {/* Overlay de hover avec nom du projet */}
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <span className="px-3 py-1 text-md font-semibold text-light">
+                    <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none bg-black/50 group-hover:opacity-100">
+                      <span className="px-3 py-1 font-semibold text-md text-light">
                         {project.name}
                       </span>
                     </div>
@@ -392,13 +389,13 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
           {selectedProject && isDesktop && (
             <div 
               ref={modalRef}
-              className="pointer-events-auto absolute z-50 right-full mr-[100px] top-1/2 -translate-y-1/2 w-[90vw] max-w-sm max-h-[70vh] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0"
+              className="pointer-events-auto absolute z-50 right-full mr-8 top-1/2 -translate-y-1/2 w-[90vw] max-w-sm max-h-[70vh] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Image au-dessus avec scroll animé */}
               <div
                 ref={modalScrollRef}
-                className="relative h-48 w-full flex-shrink-0 overflow-hidden"
+                className="relative flex-shrink-0 w-full h-48 overflow-hidden"
               >
                 <div ref={modalImageRef}>
                   <Image
@@ -414,12 +411,12 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
               {/* Contenu texte scrollable */}
               <div
                 ref={modalContentRef}
-                className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4 py-8 text-light"
+                className="flex-1 p-4 py-8 space-y-3 overflow-y-auto custom-scrollbar text-light"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h3 className="mb-2 text-gray-400">
-                     Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
+                     Client : <span className="text-lg font-semibold text-secondary">{selectedProject.name}</span>
                     </h3>
                     <p className="text-xs text-gray-400">
                       Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
@@ -439,14 +436,14 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                 <p className="text-base text-gray-300">{selectedProject.description}</p>
 
                 <div>
-                  <p className="mb-1 text-xs opacity-60">
+                  <p className="text-xs opacity-60">
                     Stack used :
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs">
                     {selectedProject.stack.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
+                        className="px-2 py-1 text-sm text-gray-300 border rounded-md border-secondary/10 bg-primary/80"
                       >
                         {tech}
                       </span>
@@ -469,6 +466,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
 
@@ -476,23 +474,23 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
       {selectedProject && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 z-30 bg-black/60"
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:backdrop-blur-none"
           onClick={handleCloseModal}
         />
       )}
 
       {/* Carte détaillée - Mobile */}
       {selectedProject && !isDesktop && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center md:justify-end md:pr-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pointer-events-none md:justify-end md:pr-4">
               <div
                 ref={modalRef}
-                className="pointer-events-auto relative z-10 w-[90vw] max-w-md max-h-[60vh] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
+                className="pointer-events-auto relative z-10 w-[90vw] max-w-md max-h-[65vh] h-fit flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Image au-dessus avec scroll animé */}
                 <div
                   ref={modalScrollRef}
-                  className="relative h-48 w-full flex-shrink-0 overflow-hidden"
+                  className="relative flex-shrink-0 w-full h-48 overflow-hidden"
                 >
                   <div ref={modalImageRef}>
                     <Image
@@ -508,12 +506,12 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                 {/* Contenu texte scrollable */}
                 <div
                   ref={modalContentRef}
-                  className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4 py-8 text-light"
+                  className="flex-1 p-4 py-8 space-y-3 overflow-y-auto custom-scrollbar text-light"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h3 className="mb-2 text-gray-400">
-                       Client : <span className="font-semibold text-lg text-secondary">{selectedProject.name}</span>
+                       Client : <span className="text-lg font-semibold text-secondary">{selectedProject.name}</span>
                       </h3>
                       <p className="text-xs text-gray-400">
                         Context : <span className="font-regular text-light">{selectedProject.cadre}</span>
@@ -540,7 +538,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                       {selectedProject.stack.map((tech) => (
                         <span
                           key={tech}
-                          className="rounded-md text-sm border border-secondary/10 bg-primary/80 px-2 py-1 text-gray-300"
+                          className="px-2 py-1 text-sm text-gray-300 border rounded-md border-secondary/10 bg-primary/80"
                         >
                           {tech}
                         </span>

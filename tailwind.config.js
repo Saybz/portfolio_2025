@@ -17,7 +17,7 @@ module.exports = {
         strokeline: "#B9B9B9",
       },
       maxWidth: {
-        main: "1440px",
+        main: "1920px",
       },
       spacing: {
         vmain: "6rem",

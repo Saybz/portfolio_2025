@@ -39,7 +39,7 @@ const Navigation: React.FC<NavigationProps> = ({
     <header
       className={`fixed z-50 transform -translate-x-1/2 ${
         isLoading ? "opacity-0" : "opacity-1"
-      } transition-all duration-500 bottom-4 delay-1000 left-1/2`}
+      } transition-all duration-500 bottom-4 md:bottom-[5%] delay-1000 left-1/2`}
     >
       <span
         ref={dotRef}
