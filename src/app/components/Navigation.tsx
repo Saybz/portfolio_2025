@@ -2,41 +2,9 @@
 
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import { User, LayoutGrid } from "lucide-react";
 import { scenes } from "@/app/components/data/sceneConfig";
-
-const ProfileIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
-    <path d="M4 20a8 8 0 0 1 16 0" />
-  </svg>
-);
-
-const ProjectsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="4" width="7" height="7" rx="1.5" />
-    <rect x="14" y="4" width="7" height="7" rx="1.5" />
-    <rect x="3" y="13" width="7" height="7" rx="1.5" />
-    <rect x="14" y="13" width="7" height="7" rx="1.5" />
-  </svg>
-);
+import Button from "@/app/components/Button";
 
 type NavigationProps = {
   currentIndex: number;
@@ -84,14 +52,17 @@ const Navigation: React.FC<NavigationProps> = ({
             <li
               key={index}
               id={`nav-item-${index}`}
-              onClick={() => onNavClick(index)}
-              className={`flex items-center justify-center m-2 w-14 h-14 rounded-xl border transition-all duration-500 cursor-pointer ${
-                currentIndex === index
-                  ? "bg-secondary border-secondary text-primaryDark shadow-xl"
-                  : "border-[1px] border-secondary/30 bg-secondary/20 backdrop-blur-md text-secondary shadow-md hover:bg-secondary/30"
-              }`}
+              className="m-2"
             >
-              {index === 0 ? <ProfileIcon /> : <ProjectsIcon />}
+              <Button
+                variant={currentIndex === index ? "pushable" : "pushable-inactive"}
+                icon={index === 0 ? User : LayoutGrid}
+                onClick={() => onNavClick(index)}
+              >
+                <span className="sr-only">
+                  {index === 0 ? "Profil" : "Projets"}
+                </span>
+              </Button>
             </li>
           ))}
         </ul>

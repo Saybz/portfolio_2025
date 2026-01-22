@@ -35,7 +35,7 @@ body {
 }
 
 body {
-  background: var(--color-primary);
+  background: var(--color-primary-dark);
   overflow: hidden;
 }
 
@@ -57,27 +57,238 @@ a {
   justify-content: center;
 }
 
-/* CSS pour l'animation de chargement */
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 2s linear infinite;
+/* Style pushable pour les boutons */
+.pushable {
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  outline-offset: 4px;
+  position: relative;
+  width: fit-content;
+  display: inline-block;
+}
+
+/* Variant secondary (par défaut) */
+.pushable-secondary {
+  background: color-mix(in srgb, var(--color-secondary) 70%, black);
+}
+
+.pushable-secondary .front {
+  background: var(--color-secondary);
+  color: var(--color-primary-dark);
+}
+
+.pushable .front {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transform: translateY(-4px);
+  transition: transform 0.1s ease;
+  font-weight: 600;
+  width: fit-content;
+}
+
+/* Style pushable pour les cartes de projets */
+.pushable-card {
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  outline-offset: 4px;
+  position: relative;
+  display: inline-block;
+}
+
+.pushable-card-secondary {
+  background: var(--color-secondary);
+}
+
+.pushable-card-secondary .front {
+  background: var(--color-secondary);
+  color: var(--color-primary-dark);
+}
+
+.pushable-card .front {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transform: translateY(-4px);
+  transition: transform 0.1s ease;
+  font-weight: 600;
+}
+
+/* Tailles pour les boutons pushable */
+.pushable-sm .front {
+  padding: 6px 8px;
+}
+
+.pushable-md .front {
+  padding: 12px;
+}
+
+.pushable-lg .front {
+  padding: 16px 24px;
+}
+
+.pushable:active .front {
+  transform: translateY(-1px);
+}
+
+.pushable-card:active .front {
+  transform: translateY(-1px);
+}
+
+.pushable:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Variant red */
+.pushable-red {
+  background: color-mix(in srgb, #ef4444 70%, black);
+}
+
+.pushable-red .front {
+  background: #ef4444;
+  color: white;
+
+}
+
+/* Variante pour les boutons inactifs */
+.pushable-inactive {
+  background: color-mix(in srgb, var(--color-secondary) 70%, black);
+  border-radius: 8px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  width: fit-content;
+}
+
+.pushable-inactive .front {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(245, 195, 120, 0.2);
+  backdrop-filter: blur(8px);
+  color: var(--color-dark);
+  transform: translateY(-4px);
+  transition: transform 0.1s ease, background 0.2s ease;
+  font-weight: 600;
+  border: 1px solid rgba(245, 195, 120, 0.3);
+  width: fit-content;
+}
+
+/* Tailles pour les boutons pushable-inactive */
+.pushable-inactive.pushable-sm .front {
+  padding: 6px 12px;
+}
+
+.pushable-inactive.pushable-md .front {
+  padding: 12px;
+}
+
+.pushable-inactive.pushable-lg .front {
+  padding: 16px 24px;
+}
+
+.pushable-inactive:active .front {
+  transform: translateY(-1px);
+}
+
+.pushable-inactive:hover .front {
+  background: rgba(245, 195, 120, 0.3);
+}
+
+.pushable-inactive:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* CSS pour la barre de progression style arcade 3D */
+.arcade-progress-bar {
+  width: 200px;
+  height: 24px;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-secondary);
+  position: relative;
+  overflow: hidden;
+  padding: 2px;
+  display: flex;
+  gap: 2px;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 2px rgba(245, 195, 120, 0.2),
+    0 0 0 1px var(--color-primary-dark),
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(245, 195, 120, 0.3);
+  border-radius: 1px;
+}
+
+.arcade-progress-block {
+  flex: 1;
+  height: 100%;
+  background: var(--color-primary-dark);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: arcade-block-appear 0.1s forwards,
+             arcade-block-loop 2s infinite;
+  box-shadow: 
+    inset 0 1px 3px rgba(245, 195, 120, 0.8),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(245, 195, 120, 0.4);
+  border-radius: 1px;
+  position: relative;
+}
+
+.arcade-progress-block::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-secondary);
+  border-radius: 1px;
+}
+
+.arcade-progress-block::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 100%
+  );
+  border-radius: 1px 1px 0 0;
+  pointer-events: none;
+}
+
+@keyframes arcade-block-appear {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes arcade-block-loop {
+  0%, 100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 canvas {
   height: 110vh !important;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 /* Masquer la scrollbar tout en gardant la fonctionnalité de scroll */

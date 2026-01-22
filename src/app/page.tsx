@@ -261,8 +261,20 @@ export default function Home() {
     <>
       {/* Animation de chargement */}
       {isLoading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-primary">
-          <div className="loader"></div>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-primaryDark">
+          <div className="flex flex-col items-center gap-4">
+            <div className="arcade-progress-bar">
+              {Array.from({ length: 16 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="arcade-progress-block"
+                  style={{
+                    animationDelay: `${index * 0.125}s`,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       )}
       <Navigation
@@ -271,7 +283,7 @@ export default function Home() {
         isLoading={isLoading}
         animateDot={animateDot}
       />
-      <main className="z-10 h-full text-dark max-w-main bg-primary">
+      <main className="z-10 h-full text-light max-w-main bg-primaryDark">
         <div className="w-full pt-12 md:pt-16">
           <Suspense fallback={null}>
 

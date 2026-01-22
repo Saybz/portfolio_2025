@@ -1,4 +1,5 @@
 import { FileUser } from "lucide-react";
+import Button from "@/app/components/Button";
 
 export type SceneId = "intro" | "projects";
 
@@ -94,13 +95,15 @@ export const scenes: SceneConfig[] = [
       },
       {
         content: (
-          <a className="inline-flex items-center gap-2 border-[1px] border-secondary/30 px-4 py-2 rounded-md bg-secondary/20 backdrop-blur-md text-secondary shadow-md hover:bg-secondary/30"
+          <Button
+            variant="pushable"
             href="./img/CV_Shailash_Bhati.pdf"
-            target="_blank"
+            external
+            icon={FileUser}
+            iconPosition="left"
           >
-            <FileUser className="w-4 h-4" />
             Check my Resume
-          </a>
+          </Button>
         ),
         animation: {
           hidden: { opacity: 0, x: -100 },
