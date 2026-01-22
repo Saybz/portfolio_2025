@@ -55,7 +55,25 @@ export const scenes: SceneConfig[] = [
       },
       {
         content: (
-          <p>I’m a 27-year-old French web developer based at Bordeaux.</p>
+          <p className="mb-4">I’m a 27-year-old French web developer based at Bordeaux.</p>
+        ),
+        animation: {
+          hidden: { opacity: 0, x: -100 },
+          visible: { opacity: 1, x: 0 },
+          delay: 0.1,
+        },
+      },
+      {
+        content: (
+          <Button
+            variant="pushable"
+            href="./img/CV_Shailash_Bhati.pdf"
+            external
+            icon={FileUser}
+            iconPosition="right"
+          >
+            Check my Resume
+          </Button>
         ),
         animation: {
           hidden: { opacity: 0, x: -100 },
@@ -84,7 +102,7 @@ export const scenes: SceneConfig[] = [
       {
         content: (
           <p className="mb-4 text-gray-300">
-            Passionate <span className="font-bold text-light">front-end developer</span> with a strong focus on <span className="font-bold text-light">user experience</span>. I enjoy understanding and contributing to every stage of a project in order to create <span className="font-bold text-light">coherent, useful, and efficient interfaces</span>.
+            Passionate <span className="font-bold text-secondary">front-end developer</span> with a strong focus on <span className="font-bold text-secondary">user experience</span>. I enjoy understanding and contributing to every stage of a project in order to create <span className="font-bold text-secondary">coherent, useful, and efficient interfaces</span>.
           </p>
         ),
         animation: {
@@ -93,25 +111,6 @@ export const scenes: SceneConfig[] = [
           delay: 0,
         },
       },
-      {
-        content: (
-          <Button
-            variant="pushable"
-            href="./img/CV_Shailash_Bhati.pdf"
-            external
-            icon={FileUser}
-            iconPosition="right"
-          >
-            Check my Resume
-          </Button>
-        ),
-        animation: {
-          hidden: { opacity: 0, x: -100 },
-          visible: { opacity: 1, x: 0 },
-          delay: 0.1,
-        },
-      },
-
     ],
   },
 ];

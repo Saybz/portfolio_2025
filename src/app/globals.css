@@ -147,6 +147,14 @@ a {
   }
 }
 
+.pushable:hover .front {
+  transform: translateY(-6px);
+}
+
+.pushable-card:hover .front {
+  transform: translateY(-6px);
+}
+
 .pushable:active .front {
   transform: translateY(-1px);
 }
@@ -224,12 +232,13 @@ a {
   }
 }
 
-.pushable-inactive:active .front {
-  transform: translateY(-1px);
+.pushable-inactive:hover .front {
+  transform: translateY(-6px);
+  background: rgba(245, 195, 120, 0.3);
 }
 
-.pushable-inactive:hover .front {
-  background: rgba(245, 195, 120, 0.3);
+.pushable-inactive:active .front {
+  transform: translateY(-1px);
 }
 
 .pushable-inactive:focus:not(:focus-visible) {
