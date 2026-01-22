@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, MoveRight, X } from "lucide-react";
 import { projects } from "@/app/components/data/projects";
 import Button from "@/app/components/Button";
 
@@ -382,7 +382,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   href={selectedProject.url}
                   color="secondary"
                   external
-                  icon={ArrowRight}
+                  icon={MoveRight}
                   iconPosition="right"
                 >
                   Go to project

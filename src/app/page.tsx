@@ -263,6 +263,7 @@ export default function Home() {
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-primaryDark">
           <div className="flex flex-col items-center gap-4">
+            <p className="text-light text-lg font-semibold">Loading...</p>
             <div className="arcade-progress-bar">
               {Array.from({ length: 16 }).map((_, index) => (
                 <div

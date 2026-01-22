@@ -100,7 +100,7 @@ export const scenes: SceneConfig[] = [
             href="./img/CV_Shailash_Bhati.pdf"
             external
             icon={FileUser}
-            iconPosition="left"
+            iconPosition="right"
           >
             Check my Resume
           </Button>

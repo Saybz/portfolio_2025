@@ -41,11 +41,11 @@ const ButtonContent: React.FC<{
   const iconSize = variant === "pushable" || variant === "pushable-inactive" ? "w-6 h-6" : "w-4 h-4";
   
   return (
-    <>
+    <span className="inline-flex items-center gap-3">
       {Icon && iconPosition === "left" && <Icon className={iconSize} />}
       {children}
       {Icon && iconPosition === "right" && <Icon className={iconSize} />}
-    </>
+    </span>
   );
 };
 
