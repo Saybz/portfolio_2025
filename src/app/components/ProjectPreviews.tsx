@@ -335,7 +335,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
       <div className={`relative z-40 w-full max-w-main mx-auto md:h-screen ${
         currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
       }`}>
-        <div className="flex justify-center w-full h-full px-4 pb-20 md:pb-0 md:items-center md:justify-end">
+        <div className="flex justify-center w-full h-full px-4 pb-24 md:pb-0 md:items-center md:justify-end">
           <div className={`relative flex w-max ${
             isDesktop ? 'flex-col py-2' : 'flex-col'
           }`}>
