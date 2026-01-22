@@ -301,5 +301,30 @@ canvas {
   display: none; /* Chrome, Safari et Opera */
 }
 
+/* Barre de scroll custom avec couleur secondary */
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--color-secondary) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-secondary);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--color-secondary) 80%, white);
+}
+
 @media (prefers-color-scheme: dark) {
 }

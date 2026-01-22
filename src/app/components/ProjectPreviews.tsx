@@ -392,7 +392,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
           {selectedProject && isDesktop && (
             <div 
               ref={modalRef}
-              className="pointer-events-auto absolute z-50 right-full mr-[100px] top-1/2 -translate-y-1/2 w-[90vw] max-w-sm h-[80vh] max-h-[600px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0"
+              className="pointer-events-auto absolute z-50 right-full mr-[100px] top-1/2 -translate-y-1/2 w-[90vw] max-w-sm max-h-[70vh] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Image au-dessus avec scroll animé */}
@@ -414,7 +414,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
               {/* Contenu texte scrollable */}
               <div
                 ref={modalContentRef}
-                className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
+                className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4 py-8 text-light"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -486,7 +486,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center md:justify-end md:pr-4">
               <div
                 ref={modalRef}
-                className="pointer-events-auto relative z-10 w-[90vw] max-w-md h-[80vh] max-h-[580px] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
+                className="pointer-events-auto relative z-10 w-[90vw] max-w-md max-h-[60vh] flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Image au-dessus avec scroll animé */}
@@ -508,7 +508,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                 {/* Contenu texte scrollable */}
                 <div
                   ref={modalContentRef}
-                  className="flex-1 overflow-y-auto hide-scrollbar space-y-3 p-4 py-8 text-light"
+                  className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4 py-8 text-light"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
