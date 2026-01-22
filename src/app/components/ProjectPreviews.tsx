@@ -26,6 +26,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const modalImageRef = useRef<HTMLDivElement | null>(null);
   const previousProjectIdRef = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Détection simple du breakpoint pour ne rendre qu'une seule variante (desktop ou mobile)
   useEffect(() => {
@@ -332,17 +333,35 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
 
   return (
     <>
-      <div className={`relative z-40 w-full max-w-main mx-auto md:h-screen ${
-        currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
-      }`}>
-        <div className="flex justify-center w-full h-full px-4 pb-24 md:pb-0 md:items-center md:justify-end">
-          <div className={`relative flex w-max ${
-            isDesktop ? 'flex-col py-2' : 'flex-col'
-          }`}>
+      <div 
+        ref={containerRef}
+        className={`relative z-40 w-full max-w-main mx-auto md:h-screen ${
+          currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        onClick={(e) => {
+          // Fermer la modale si on clique en dehors de la liste de cartes et de la modale
+          if (selectedProjectId && containerRef.current) {
+            const target = e.target as HTMLElement;
+            const isClickOnCards = containerRef.current.querySelector('.cards-container')?.contains(target);
+            const isClickOnModal = modalRef.current?.contains(target);
+            
+            if (!isClickOnCards && !isClickOnModal) {
+              handleCloseModal();
+            }
+          }
+        }}
+      >
+        <div className="flex justify-center w-full h-full px-4 pb-26 md:pb-0 md:items-center md:justify-end">
+          <div 
+            className={`relative flex w-max ${
+              isDesktop ? 'flex-col py-2' : 'flex-col'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <p ref={titleRef} className="pl-4 text-sm opacity-0 text-light/70">
               Some projects :
             </p>
-            <div className={cardsContainerClass}>
+            <div className={`${cardsContainerClass} cards-container`}>
           {projects.map((project, index) => {
             return (
               <a
@@ -365,10 +384,13 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
                   >
                     <Image
                       src={project.imageSrc}
-                      alt={project.name}
+                      alt={`Capture d'écran du projet ${project.name}`}
                       className="block w-full"
                       width={project.imageWidth}
                       height={project.imageHeight}
+                      loading="lazy"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     />
 
                     {/* Overlay de hover avec nom du projet */}
@@ -474,7 +496,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
       {selectedProject && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:backdrop-blur-none"
+          className="fixed inset-0 z-30 pointer-events-auto bg-black/60 backdrop-blur-sm md:backdrop-blur-none"
           onClick={handleCloseModal}
         />
       )}
@@ -484,7 +506,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
         <div className="fixed inset-0 z-50 flex items-start justify-center pointer-events-none md:justify-end md:pr-4">
               <div
                 ref={modalRef}
-                className="pointer-events-auto relative z-10 w-[90vw] max-w-md max-h-[65vh] h-fit flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
+                className="pointer-events-auto relative z-10 w-[90vw] max-w-md max-h-[60vh] h-fit flex flex-col overflow-hidden bg-primaryDark rounded-md shadow-2xl border border-secondary/10 opacity-0 md:max-w-sm md:translate-y-[10%] md:translate-x-[30%]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Image au-dessus avec scroll animé */}
