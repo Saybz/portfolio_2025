@@ -335,7 +335,7 @@ const ProjectPreviews: React.FC<ProjectPreviewsProps> = ({ currentIndex }) => {
     <>
       <div 
         ref={containerRef}
-        className={`relative z-40 w-full max-w-main mx-auto mb-24 md:mb-0 md:h-screen ${
+        className={`relative z-40 w-full max-w-main mx-auto mb-20 md:mb-0 md:h-screen ${
           currentIndex === 1 ? "pointer-events-auto" : "pointer-events-none"
         }`}
         onClick={(e) => {
