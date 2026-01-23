@@ -308,7 +308,7 @@ export default function Home() {
             </div>
           </Suspense>
           <div className="relative z-10 flex flex-col items-start justify-between h-full md:flex-row md:justify-start xl:px-8">
-            <div className="flex flex-col items-start justify-between pt-8 md:justify-start md:pt-16">
+            <div className="flex flex-col items-start justify-between pt-12 md:justify-start md:pt-16">
               <div className="relative flex items-center justify-between py-1 px-4 mb-6 overflow-hidden font-bold transition-all duration-500 ease-in-out md:rounded-r-md rounded-r-md w-fit md:px-8 text-xl font-head bg-secondary text-primary before:absolute before:content-* before:-left-0 before:top-0 before:w-2 md:before:w-4 before:h-full before:bg-primary  md:text-xxl">
                 <h2 ref={titleRef} className="font-bold">
                   {scenes[currentIndex].title}
